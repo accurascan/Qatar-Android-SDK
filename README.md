@@ -19,7 +19,7 @@ Step 1: Add the JitPack repository to your build file:
         }
     }
 
-Step 2. Add the token to `$HOME/.gradle/gradle.properties`:
+Step 2. Add the token to `gradle.properties`:
 
     authToken=jp_lo9e8qo0o1bt4ofne9hob61v19
 
@@ -48,13 +48,13 @@ Step 3: Add the dependency:<br />
     dependencies {
         ...
         // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.0.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:1.1.0'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
 
 Step 4: Add files to project assets folder:<br />
-    Create assets folder under app/src/main and Add licence file in to assets folder.<br />
+    Create assets folder under app/src/main and add licence file in to assets folder.<br />
     - key.licence // for Accura Qatar <br />
     - accuraface.license // for Accura Face Match <br />
     Generate your Accura licence from https://accurascan.com/developer/dashboard
@@ -70,9 +70,11 @@ Step 4: Add files to project assets folder:<br />
 
          if (sdkModel.isMRZEnable) // RecogType.MRZ
 
-        // if sdkModel.isOCREnable true then get card list which you are selected on     					creating license
+        // if sdkModel.isOCREnable true then get list of the cards which you have added while creating license
         if (sdkModel.isOCREnable) List<ContryModel> modelList = recogEngine.getCardList(MainActivity.this);
         if (modelList != null) { // if country & card added in license
+
+            Use following code to get country card details.
             ContryModel contryModel = modelList.get(/*selected country position*/);
             contryModel.getCountry_id(); // getting country id
             CardModel model = contryModel.getCards().get(/*selected card position*/); // getting card
@@ -147,8 +149,8 @@ Step 4: Add files to project assets folder:<br />
      * set motion threshold to detect motion on camera document
      *
      * @param context          Activity context
-     * @param motionThreshold  is 1 to 100, 1 means it allows 1% motion on document and more than 100% it
-                               can not allow document to scan
+     * @param motionThreshold  is 1 to 100, 1 means it allows 1% motion on document and 100 means it
+                               can not detect motion and allow document to scan.
      * @param errorMessage     To display your custom message
      * @return 1 if success else 0
      */
@@ -157,11 +159,14 @@ Step 4: Add files to project assets folder:<br />
 
 #### Step 2 : Set CameraView
 
-    Must have to extend com.accurascan.libqatar.motiondetection.SensorsActivity to your activity.
+    /*
+    * Must have to extend com.accurascan.libqatar.motiondetection.SensorsActivity to your activity.
+    */
 
     private CameraView cameraView;
     private int cardId,countryId;
     private String cardName;
+    private RecogType recogType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -171,10 +176,14 @@ Step 4: Add files to project assets folder:<br />
 
         // Recog type selection base on your license data
         // As like RecogType.OCR, RecogType.MRZ
-        RecogType recogType = RecogType.OCR; // for Qatar national id card
-        cardId = CardModel.getCard_id();
-        cardName = CardModel.getCard_name();
+
+        recogType = RecogType.OCR;
+
+        //Below code it's only for Qatar National Id card(for RecogType.OCR) and for RecogType.MRZ no need of below code.
         countryId = ContryModel.getCountry_id();
+        CardModel model = ContryModel.getCards().get(/*selected card position*/);
+        cardId = model.getCard_id() // getting card id
+        cardName = model.getCard_name()  // getting card name
 
         // initialized camera
         initCamera();
@@ -190,7 +199,7 @@ Step 4: Add files to project assets folder:<br />
         int statusBarHeight = contentViewTop - statusBarTop;
         //</editor-fold>
 
-        RelativeLayout linearLayout = findViewById(R.id.ocr_root); // layout width and height is match_parent
+        RelativeLayout cameraContainer = findViewById(R.id.ocr_root); // layout width and height is match_parent
 
         cameraView = new CameraView(this);
         if (recogType == RecogType.OCR) {
@@ -198,12 +207,12 @@ Step 4: Add files to project assets folder:<br />
             cameraView.setCountryId(countryId).setCardId(cardId);
         }
         cameraView.setRecogType(recogType) // is for qatar Id card or MRZ document
-                .setView(linearLayout) // To add camera view
-                .setOcrCallback(this)  // To get Update and Success Call back
+                .setView(cameraContainer) // To add camera view
+                .setOcrCallback(this)  // To get Update and Success Callback
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible
 	//                Optional field
 	//                .setEnableMediaPlayer(false) // false to disable sound and true to enable sound. Default it's true
-	//                .setCustomMediaPlayer(MediaPlayer.create(this, com.accurascan.ocr.mrz.R.raw.beep)) // To add your custom sound and Must have to enable media player
+	//                .setCustomMediaPlayer(MediaPlayer.create(this, com.accurascan.ocr.mrz.R.raw.beep)) // To add custom sound make sure media player is enable.
                 .init();  // initialized camera
     }
 
@@ -239,7 +248,7 @@ Step 4: Add files to project assets folder:<br />
     /**
      * To update your border frame according to width and height
      * it's different for different card
-     * call {@link CameraView#startOcrScan()} method to start camera preview
+     * call {@link CameraView#startOcrScan(false)} method to start camera preview
      * @param width    border layout width
      * @param height   border layout height
      */
@@ -280,6 +289,8 @@ Step 4: Add files to project assets folder:<br />
 
             // Do some code for display data
 
+            // Use startActivityForResult(Intent, RESULT_ACTIVITY_CODE) to restart scanning after come back from result activity
+
             if (result instanceof OcrData) {
                 // @recogType is {@see com.docrecog.scan.RecogType#OCR}
                 OcrData.setOcrResult((OcrData) result); // Set data To retrieve it anywhere
@@ -287,6 +298,7 @@ Step 4: Add files to project assets folder:<br />
                 // @recogType is {@see com.docrecog.scan.RecogType#MRZ}
                 RecogResult.setRecogResult((RecogResult) result); // Set data To retrieve it anywhere
             }
+
         } else Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
     }
 
@@ -299,18 +311,19 @@ Step 4: Add files to project assets folder:<br />
      *                and also used cameraView.flipImage(ImageView) for default animation
      */
     @Override
-    public void onProcessUpdate(int title, String message, boolean isFlip) {
+    public void onProcessUpdate(int titleCode, String message, boolean isFlip) {
         // display data on ui thread
         // Check activity com.accurascan.accura.qatar.demo.OcrActivity.java to getTitleMessage(titleCode)
-        // and getErrorMessage(errorMessage)
+        // and getErrorMessage(message)
         if (getTitleMessage(titleCode) != null) { // check
             Toast.makeText(this, getTitleMessage(titleCode), Toast.LENGTH_SHORT).show(); // display title
         }
         if (message != null) {
-            Toast.makeText(this, getErrorMessage(errorMessage), Toast.LENGTH_SHORT).show(); // display message
+            Toast.makeText(this, getErrorMessage(message), Toast.LENGTH_SHORT).show(); // display message
         }
         if (isFlip) {
-            cameraView.flipImage(imageFlip); //  to set default animation or remove this line to set your customize animation
+        // To set default animation or remove this line to set your custom animation after successfully scan front side.
+            cameraView.flipImage(imageFlip);
         }
     }
 
@@ -320,11 +333,25 @@ Step 4: Add files to project assets folder:<br />
         // stop ocr if failed
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
-	
-	//<editor-fold desc="Call CameraView#startOcrScan(true) To start again Camera Preview to Rescan your card
-	//And CameraView#startOcrScan(false) To start first time">
-	if (cameraView != null) cameraView.startOcrScan(true);
-	//</editor-fold>
+
+    // After getting result to restart scanning you have to set below code onActivityResult
+    // when you use startActivityForResult(Intent, RESULT_ACTIVITY_CODE) to open result activity.
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == RESULT_ACTIVITY_CODE) {
+                Runtime.getRuntime().gc(); // To clear garbage
+                //<editor-fold desc="Call CameraView#startOcrScan(true) To start again Camera Preview
+                //to Rescan card And CameraView#startOcrScan(false) To start first time">
+
+                if (cameraView != null) cameraView.startOcrScan(true);
+
+                //</editor-fold>
+            }
+        }
+    }
+
 
 ## 2. Setup Accura Face Match
 

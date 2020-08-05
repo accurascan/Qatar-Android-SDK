@@ -194,45 +194,6 @@
                     android:layout_marginTop="@dimen/_8dp"
                     android:background="@color/backGroundColor" />
 
-                <!--Security Check-->
-                <LinearLayout
-                    android:id="@+id/ly_security_container"
-                    style="@style/ResultButtonLayout"
-                    android:layout_width="match_parent"
-                    android:visibility="gone">
-
-                    <LinearLayout
-                        style="@style/ResultButtonSubLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_2dp"
-                        android:background="@color/white"
-                        android:padding="@dimen/_5dp">
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center" />
-
-                        <com.accurascan.accura.qatar.demo.customview.CustomTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="@dimen/_10dp"
-                            android:gravity="center"
-                            android:text="DOCUMENT VERIFIED"
-                            android:textColor="@color/darkGray"
-                            android:textSize="@dimen/result_title_text" />
-
-                    </LinearLayout>
-
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
-                        android:id="@+id/tv_security"
-                        style="@style/ScoreText"
-                        android:text="Yes"
-                        android:textColor="@color/security_true"
-                        android:textStyle="bold"
-                        app:typeface="ALLER_STD" />
-                </LinearLayout>
                 <!--front table-->
                 <LinearLayout
                     android:id="@+id/ly_front_container"
@@ -291,49 +252,6 @@
 
                     <TableLayout
                         android:id="@+id/mrz_table_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:divider="@color/backGroundColor"
-                        android:showDividers="middle"
-                        android:shrinkColumns="*"
-                        android:stretchColumns="*" />
-
-                </LinearLayout>
-                <!--USDL table-->
-                <LinearLayout
-                    android:id="@+id/ly_usdl_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
-                        style="@style/ResultText"/>
-
-                    <TableLayout
-                        android:id="@+id/usdl_table_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:divider="@color/backGroundColor"
-                        android:showDividers="middle"
-                        android:shrinkColumns="*"
-                        android:stretchColumns="*" />
-
-                </LinearLayout>
-                <!--Pdf417 table-->
-                <LinearLayout
-                    android:id="@+id/ly_pdf417_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
-                        style="@style/ResultText"/>
-
-                    <TableLayout
-                        android:id="@+id/pdf417_table_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:divider="@color/backGroundColor"

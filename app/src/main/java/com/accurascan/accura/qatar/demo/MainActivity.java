@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "handleMessage: " + msg.what);
                 if (msg.what == 1) {
                     if (activity.sdkModel.isMRZEnable) activity.btnMrz.setVisibility(View.VISIBLE);
-//                    if (activity.sdkModel.isAllBarcodeEnable)
-//                        activity.btnBarcode.setVisibility(View.VISIBLE);
                     if (activity.sdkModel.isOCREnable && activity.modelList != null) {
                         activity.setCountryLayout();
                     }
@@ -264,13 +262,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("country_id", ((ContryModel) MainActivity.this.contryList.get(selectedPosition)).getCountry_id());
                         intent.putExtra("card_id", cardModel.getCard_id());
                         intent.putExtra("card_name", cardModel.getCard_name());
-                        if (cardModel.getCard_type() == 1) {
-                            RecogType.PDF417.attachTo(intent);
-                        } else if (cardModel.getCard_type() == 2) {
-                            RecogType.DL_PLATE.attachTo(intent);
-                        } else {
-                            RecogType.OCR.attachTo(intent);
-                        }
+                        RecogType.OCR.attachTo(intent);
                         startActivity(intent);
                         overridePendingTransition(0, 0);
                     }

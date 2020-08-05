@@ -1,7 +1,6 @@
 package com.accurascan.accura.qatar.demo;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import androidx.annotation.Nullable;
 import com.accurascan.libqatar.CameraView;
 import com.accurascan.libqatar.interfaces.OcrCallback;
 import com.accurascan.libqatar.model.OcrData;
-import com.accurascan.libqatar.model.PDF417Data;
 import com.accurascan.libqatar.model.RecogResult;
 import com.accurascan.libqatar.motiondetection.SensorsActivity;
 import com.docrecog.scan.RecogEngine;
@@ -31,9 +29,10 @@ import java.lang.ref.WeakReference;
 
 public class OcrActivity extends SensorsActivity implements OcrCallback {
 
+    private static final int RESULT_ACTIVITY_CODE = 101;
     private CameraView cameraView;
     private View viewLeft, viewRight, borderFrame;
-    private TextView tvTitle, tvScanMessage, btn_barcode_selection;
+    private TextView tvTitle, tvScanMessage;
     private ImageView imageFlip;
     private int cardId,countryId;
     private String cardName;
@@ -95,12 +94,9 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         RelativeLayout linearLayout = findViewById(R.id.ocr_root); // layout width and height is match_parent
 
         cameraView = new CameraView(this);
-        if (recogType == RecogType.OCR || recogType == RecogType.DL_PLATE) {
-            // must have to set data for RecogType.OCR and RecogType.DL_PLATE
+        if (recogType == RecogType.OCR) {
+            // must have to set data for RecogType.OCR
             cameraView.setCountryId(countryId).setCardId(cardId);
-        } else if (recogType == RecogType.PDF417) {
-            // must have to set data RecogType.PDF417
-            cameraView.setCountryId(countryId);
         }
         cameraView.setRecogType(recogType)
                 .setView(linearLayout) // To add camera view
@@ -119,7 +115,6 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         tvTitle = findViewById(R.id.tv_title);
         tvScanMessage = findViewById(R.id.tv_scan_msg);
         imageFlip = findViewById(R.id.im_flip_image);
-        btn_barcode_selection = findViewById(R.id.select_type);
     }
 
     @Override
@@ -175,11 +170,6 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
 
         findViewById(R.id.ocr_frame).setVisibility(View.VISIBLE);
         //</editor-fold>
-
-        //<editor-fold desc="Barcode Selection only add for RecogType.BARCODE">
-        if (recogType == RecogType.BARCODE) btn_barcode_selection.setVisibility(View.VISIBLE);
-        else btn_barcode_selection.setVisibility(View.GONE);
-        //</editor-fold>
     }
 
     /**
@@ -196,33 +186,17 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         Intent intent = new Intent(this, OcrResultActivity.class);
         if (result != null) {
             if (result instanceof OcrData) {
+                /**
+                 * @recogType is {@link com.docrecog.scan.RecogType#OCR}*/
                 OcrData.setOcrResult((OcrData) result);
-                if (recogType == RecogType.OCR) {
-                    /**
-                     * @recogType is {@link com.docrecog.scan.RecogType#OCR}*/
-                    RecogType.OCR.attachTo(intent);
-                } else if (recogType == RecogType.DL_PLATE) {
-                    /**
-                     * @recogType is {@link com.docrecog.scan.RecogType#DL_PLATE}*/
-                    RecogType.DL_PLATE.attachTo(intent);
-                }
-                startActivityForResult(intent, 101);
+                RecogType.OCR.attachTo(intent);
+                startActivityForResult(intent, RESULT_ACTIVITY_CODE);
             } else if (result instanceof RecogResult) {
                 /**
                  *  @recogType is {@link com.docrecog.scan.RecogType#MRZ}*/
                 RecogResult.setRecogResult((RecogResult) result);
                 RecogType.MRZ.attachTo(intent);
-                startActivityForResult(intent, 101);
-            } else if (result instanceof PDF417Data) {
-                /**
-                 *  @recogType is {@link com.docrecog.scan.RecogType#PDF417}*/
-                PDF417Data.setPDF417Result((PDF417Data) result);
-                RecogType.PDF417.attachTo(intent);
-                startActivityForResult(intent, 101);
-            } else if (result instanceof String) {
-                /**
-                 *  @recogType is {@link com.docrecog.scan.RecogType#BARCODE}*/
-                setResultDialog((String) result);
+                startActivityForResult(intent, RESULT_ACTIVITY_CODE);
             }
         } else Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
     }
@@ -242,24 +216,20 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
              *
              * 1. Scan Frontside of Card Name // for front side ocr
              * 2. Scan Backside of Card Name // for back side ocr
-             * 3. Scan Card Name // only for single side ocr
-             * 4. Scan Front Side of Document // for MRZ and PDF417
-             * 5. Now Scan Back Side of Document // for MRZ and PDF417
-             * 6. Scan Number Plate // for DL plate
+             * 4. Scan Front Side of Document // for front side MRZ
+             * 5. Now Scan Back Side of Document // for back side MRZ
              */
 
             message = new Message();
             message.what = 0;
             message.obj = getTitleMessage(titleCode);
             handler.sendMessage(message);
-//            tvTitle.setText(title);
         }
         if (errorMessage != null) {
             message = new Message();
             message.what = 1;
             message.obj = getErrorMessage(errorMessage);
             handler.sendMessage(message);
-//            tvScanMessage.setText(message);
         }
         if (isFlip) {
             message = new Message();
@@ -276,28 +246,22 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return String.format("Scan Front Side of %s", cardName);
             case RecogEngine.SCAN_TITLE_OCR_BACK: // for back side ocr
                 return String.format("Scan Back Side of %s", cardName);
-            case RecogEngine.SCAN_TITLE_OCR: // only for single side ocr
-                return String.format("Scan %s", cardName);
-            case RecogEngine.SCAN_TITLE_MRZ_PDF417_FRONT:// for front side MRZ and PDF417
+            case RecogEngine.SCAN_TITLE_MRZ_FRONT:// for front side MRZ
                 return "Scan Front Side of Document";
-            case RecogEngine.SCAN_TITLE_MRZ_PDF417_BACK: // for back side MRZ and PDF417
+            case RecogEngine.SCAN_TITLE_MRZ_BACK: // for back side MRZ
                 return "Now Scan Back Side of Document";
-            case RecogEngine.SCAN_TITLE_DLPLATE: // for DL plate
-                return "Scan Number Plate";
-            default:return "";
+            default: return "";
         }
     }
 
-    private String getErrorMessage(String s){
-        switch (s){
+    private String getErrorMessage(String s) {
+        switch (s) {
             case "1":
                 return "Keep document in frame";
             case "2":
                 return "Bring card near to frame.";
             case "3":
                 return "Processing...";
-            case "4":
-                return "Scanning wrong side of the document";
             default:
                 return s;
         }
@@ -315,39 +279,16 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == 101) {
+            if (requestCode == RESULT_ACTIVITY_CODE) {
                 Runtime.getRuntime().gc(); // To clear garbage
                 //<editor-fold desc="Call CameraView#startOcrScan(true) To start again Camera Preview
                 //And CameraView#startOcrScan(false) To start first time">
+
                 if (cameraView != null) cameraView.startOcrScan(true);
+
                 //</editor-fold>
             }
         }
-    }
-
-    /**
-     * If recogType is RecogType.BARCODE then display Barcode data on Dialog
-     *
-     * @param output it is the barcode data
-     */
-    private void setResultDialog(final String output) {
-        Runnable runnable = () -> {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(OcrActivity.this);
-            dialog.setTitle("Barcode Result");
-            dialog.setMessage(output);
-            dialog.setCancelable(false);
-            dialog.setNegativeButton("Retry", (dialog1, which) -> {
-                if (cameraView != null) cameraView.onResume(); // Resume camera after dismiss dialog
-            });
-            dialog.setPositiveButton("Ok", (dialog1, which) -> onBackPressed());
-            try {
-                dialog.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
-        runOnUiThread(runnable);
-
     }
 
 }

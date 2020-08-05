@@ -31,22 +31,19 @@ import java.util.List;
 
 public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMatchCallBack, FaceCallback {
 
-    Bitmap face1;
     private final int ACCURA_LIVENESS_CAMERA = 101;
 
-    TableLayout mrz_table_layout, front_table_layout, back_table_layout, usdl_table_layout, pdf417_table_layout;
-
+    TableLayout mrz_table_layout, front_table_layout, back_table_layout;
     ImageView ivUserProfile, ivUserProfile2, iv_frontside, iv_backside;
     LinearLayout ly_back, ly_front;
-    View dl_plate_lout, ly_mrz_container, ly_front_container, ly_back_container, ly_security_container, ly_pdf417_container, ly_usdl_container;
+    View ly_mrz_container, ly_front_container, ly_back_container;
     View loutImg, loutImg2;
     private FaceHelper faceHelper;
-    private TextView tvFaceMatchScore, tvLivenessScore;
+    private TextView tvFaceMatchScore;
     private View loutFmScore, loutLivenessScore;
     OcrData.MapData Frontdata;
     OcrData.MapData Backdata;
-    private Uri uri;
-    private Bitmap face2;
+    private Bitmap face1,face2;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,13 +95,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         loutFmScore = findViewById(R.id.lout_fm_score);
         tvFaceMatchScore = findViewById(R.id.tvFaceMatchScore);
 
-//        tvLivenessScore = loutLivenessScore.findViewById(R.id.tv_value);
-//        tvFaceMatchScore = loutFmScore.findViewById(R.id.tv_value);
-//        TextView tvLiveness = loutLivenessScore.findViewById(R.id.tv_key);
-//        TextView tvFaceMatch = loutFmScore.findViewById(R.id.tv_key);
-//        tvLiveness.setText(getString(R.string.liveness));
-//        tvFaceMatch.setText(getString(R.string.face_match));
-
         loutImg2.setVisibility(View.GONE);
 
         ly_back = findViewById(R.id.ly_back);
@@ -115,27 +105,17 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         mrz_table_layout = findViewById(R.id.mrz_table_layout);
         front_table_layout = findViewById(R.id.front_table_layout);
         back_table_layout = findViewById(R.id.back_table_layout);
-        pdf417_table_layout = findViewById(R.id.pdf417_table_layout);
-        usdl_table_layout = findViewById(R.id.usdl_table_layout);
 
-//        dl_plate_lout = findViewById(R.id.dl_plate_lout);
         ly_mrz_container = findViewById(R.id.ly_mrz_container);
         ly_front_container = findViewById(R.id.ly_front_container);
         ly_back_container = findViewById(R.id.ly_back_container);
-        ly_security_container = findViewById(R.id.ly_security_container);
-        ly_pdf417_container = findViewById(R.id.ly_pdf417_container);
-        ly_usdl_container = findViewById(R.id.ly_usdl_container);
 
         loutFmScore.setVisibility(View.GONE);
         tvFaceMatchScore.setVisibility(View.GONE);
         loutLivenessScore.setVisibility(View.GONE);
-        ly_security_container.setVisibility(View.GONE);
         ly_front_container.setVisibility(View.GONE);
         ly_back_container.setVisibility(View.GONE);
         ly_mrz_container.setVisibility(View.GONE);
-        ly_pdf417_container.setVisibility(View.GONE);
-        ly_usdl_container.setVisibility(View.GONE);
-//        dl_plate_lout.setVisibility(View.GONE);
     }
 
     private void setOcrData(OcrData ocrData) {
@@ -194,12 +174,9 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                             imageView.setVisibility(View.GONE);
                             front_table_layout.addView(layout);
                         }
-                    } else if (data_type == 3) {
-                        updateSecurityLayout(value);
                     }
                 }
             }
-//            Glide.with(this).load(Base64.decode(ocrData.getFrontDocument(), Base64.DEFAULT)).into(iv_frontside);
             final Bitmap frontBitmap = ocrData.getFrontimage();
             if (frontBitmap != null && !frontBitmap.isRecycled()) {
                 iv_frontside.setImageBitmap(frontBitmap);
@@ -251,8 +228,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                             back_table_layout.addView(layout);
 
                         }
-                    } else if (data_type == 3) {
-                        updateSecurityLayout(value);
                     }
 
                 }
@@ -266,19 +241,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
             ly_back_container.setVisibility(View.GONE);
         }
         setData();
-    }
-
-
-    private void updateSecurityLayout(String s) {
-//        boolean isVerified = Boolean.parseBoolean(s);
-//        if (isVerified) {
-//            tv_security.setText("YES");
-//            tv_security.setTextColor(getResources().getColor(R.color.security_true));
-//        } else {
-//            tv_security.setTextColor(getResources().getColor(R.color.security_false));
-//            tv_security.setText("NO");
-//        }
-//        ly_security_container.setVisibility(View.VISIBLE);
     }
 
     private void setMRZData(RecogResult recogResult) {
@@ -328,14 +290,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         } else {
             ivUserProfile.setVisibility(View.GONE);
         }
-    }
-
-    //method for setting liveness data
-    //parameter to pass : livenessScore
-    private void setLivenessData(String livenessScore) {
-        tvLivenessScore.setText(String.format("%s %%", livenessScore.length() > 5 ? livenessScore.substring(0, 5) : livenessScore));
-        loutLivenessScore.setVisibility(View.VISIBLE);
-        loutFmScore.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -477,7 +431,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     public void onBackPressed() {
 
         //<editor-fold desc="To resolve memory leak">
-        if ((RecogType.detachFrom(getIntent()) == RecogType.OCR || RecogType.detachFrom(getIntent()) == RecogType.DL_PLATE) && OcrData.getOcrResult() != null) {
+        if ((RecogType.detachFrom(getIntent()) == RecogType.OCR) && OcrData.getOcrResult() != null) {
             try {
                 OcrData.getOcrResult().getFrontimage().recycle();
             } catch (Exception e) {
