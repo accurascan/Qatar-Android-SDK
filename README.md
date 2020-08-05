@@ -61,7 +61,7 @@ Step 4: Add files to project assets folder:<br />
 
 ## 1. Setup Accura Qatar OCR
 
-####Step 1 : To initialize sdk on app start:
+#### Step 1 : To initialize sdk on app start:
 
     RecogEngine recogEngine = new RecogEngine();
     RecogEngine.SDKModel sdkModel = recogEngine.initEngine(your activity context);
@@ -155,7 +155,7 @@ Step 4: Add files to project assets folder:<br />
     recogEngine.setMotionThreshold(Context context, int /*motionThreshold*/18, @NonNull String message, String errorMessage);
 
 
-####Step 2 : Set CameraView
+#### Step 2 : Set CameraView
 
     Must have to extend com.accurascan.libqatar.motiondetection.SensorsActivity to your activity.
 
@@ -328,7 +328,7 @@ Step 4: Add files to project assets folder:<br />
 
 ## 2. Setup Accura Face Match
 
-####Step 1 : Simple Usage to face match in your app.
+#### Step 1 : Simple Usage to face match in your app.
 
     // Just add FaceMatch activity to your manifest:
     <activity android:name="com.accurascan.facematch.ui.FaceMatchActivity"/>
@@ -337,7 +337,7 @@ Step 4: Add files to project assets folder:<br />
     Intent intent = new Intent(this, FaceMatchActivity.class);
     startActivity(intent);
 
-####Step 2 : Implement face match code manually to your activity.
+#### Step 2 : Implement face match code manually to your activity.
 
     Important Grant Camera and storage Permission.
 
@@ -416,7 +416,7 @@ Step 4: Add files to project assets folder:<br />
     public void onExtractInit(int ret) {
     }
 
-##ProGuard
+## ProGuard
 Depending on your ProGuard (DexGuard) config and usage, you may need to include the following lines in your proguards.
 ```
 -keep public class com.docrecog.scan.ImageOpencv {*;}
