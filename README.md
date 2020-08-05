@@ -57,7 +57,7 @@ Step 4: Add files to project assets folder:<br />
     Create assets folder under app/src/main and Add licence file in to assets folder.<br />
     - key.licence // for Accura Qatar <br />
     - accuraface.license // for Accura Face Match <br />
-    Generate your Accura licence from https://accurascan.com/developer/sdk-license
+    Generate your Accura licence from https://accurascan.com/developer/dashboard
 
 ## 1. Setup Accura Qatar OCR
 
