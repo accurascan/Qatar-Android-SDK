@@ -2,10 +2,12 @@ package com.accurascan.accura.qatar.demo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,9 +16,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+
+import com.accurascan.accura.qatar.demo.util.Utils;
+import com.accurascan.facedetection.LivenessCustomization;
+import com.accurascan.facedetection.SelfieCameraActivity;
+import com.accurascan.facedetection.model.AccuraVerificationResult;
 import com.accurascan.facematch.util.BitmapHelper;
 import com.accurascan.facematch.util.FaceHelper;
 import com.accurascan.libqatar.model.OcrData;
@@ -27,7 +35,6 @@ import com.inet.facelock.callback.FaceCallback;
 import com.inet.facelock.callback.FaceDetectionResult;
 
 import java.io.File;
-import java.util.List;
 
 public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMatchCallBack, FaceCallback {
 
@@ -39,10 +46,11 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     View ly_mrz_container, ly_front_container, ly_back_container;
     View loutImg, loutImg2;
     private FaceHelper faceHelper;
-    private TextView tvFaceMatchScore;
+    private TextView tvFaceMatchScore, tvLivenessScore;
     private View loutFmScore, loutLivenessScore;
     OcrData.MapData Frontdata;
     OcrData.MapData Backdata;
+    private Uri uri;
     private Bitmap face1,face2;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +101,12 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         loutImg2 = findViewById(R.id.lyt_img_cover2);
         loutLivenessScore = findViewById(R.id.lout_liveness_score);
         loutFmScore = findViewById(R.id.lout_fm_score);
-        tvFaceMatchScore = findViewById(R.id.tvFaceMatchScore);
+        tvLivenessScore = loutLivenessScore.findViewById(R.id.tv_value);
+        tvFaceMatchScore = loutFmScore.findViewById(R.id.tv_value);
+        TextView tvLiveness = loutLivenessScore.findViewById(R.id.tv_key);
+        TextView tvFaceMatch = loutFmScore.findViewById(R.id.tv_key);
+        tvLiveness.setText(getString(R.string.liveness));
+        tvFaceMatch.setText(getString(R.string.face_match));
 
         loutImg2.setVisibility(View.GONE);
 
@@ -111,7 +124,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         ly_back_container = findViewById(R.id.ly_back_container);
 
         loutFmScore.setVisibility(View.GONE);
-        tvFaceMatchScore.setVisibility(View.GONE);
         loutLivenessScore.setVisibility(View.GONE);
         ly_front_container.setVisibility(View.GONE);
         ly_back_container.setVisibility(View.GONE);
@@ -292,21 +304,58 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         }
     }
 
+    public void handleVerificationSuccessResult(final AccuraVerificationResult result) {
+        if (result != null) {
+//            showProgressDialog();
+            Runnable runnable = new Runnable() {
+                public void run() {
+
+                    faceHelper.setInputImage(face1);
+
+                    if (result.getFaceBiometrics() != null) {
+                        if (result.getLivenessResult() == null) {
+                            return;
+                        }
+                        if (result.getLivenessResult().getStatus()) {
+                            Bitmap face2 = result.getFaceBiometrics();
+
+                            if (face2 != null) {
+                                faceHelper.setMatchImage(face2);
+                            }
+                            setLivenessData(result.getLivenessResult().getLivenessScore() * 100.0 + "");
+                        }
+                    }
+
+
+                }
+            };
+            new Handler().postDelayed(runnable, 100);
+        }
+    }
+
+    //method for setting liveness data
+    //parameter to pass : livenessScore
+    private void setLivenessData(String livenessScore) {
+        tvLivenessScore.setText(String.format("%s %%", livenessScore.length() > 5 ? livenessScore.substring(0, 5) : livenessScore));
+        loutLivenessScore.setVisibility(View.VISIBLE);
+        loutFmScore.setVisibility(View.VISIBLE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == ACCURA_LIVENESS_CAMERA /*&& data != null*/) {
-//                AccuraVerificationResult result = data.getParcelableExtra("Accura.liveness");
-//                if (result == null) {
-//                    return;
-//                }
-//                if (result.getStatus().equals("1")) {
-//                    handleVerificationSuccessResult(result);
-//                } else {
-//                    Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
-//                }
-            } else if (requestCode == 100) {
+            if (requestCode == ACCURA_LIVENESS_CAMERA && data != null) {
+                AccuraVerificationResult result = data.getParcelableExtra("Accura.liveness");
+                if (result == null) {
+                    return;
+                }
+                if (result.getStatus().equals("1")) {
+                    handleVerificationSuccessResult(result);
+                } else {
+                    Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            } else if (requestCode == 101) {
                 if (faceHelper != null && face1 != null) {
                     faceHelper.setInputImage(face1);
                 }
@@ -332,11 +381,11 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     }
 
     public void onCLickFaceMatch(View view) {
-        if (view.getId() == R.id.btn_fm) {
+        if (view.getId() == R.id.btn_liveness) {
             if (faceHelper == null) {
                 faceHelper = new FaceHelper(this);
             } else {
-                performClick(true, false);
+                performClick(false, true);
             }
         }
     }
@@ -347,7 +396,22 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     }
 
     private void openLivenessCamera() {
+        LivenessCustomization livenessCustomization = new LivenessCustomization();
 
+        livenessCustomization.backGroundColor = getResources().getColor(R.color.livenessBackground);
+        livenessCustomization.closeIconColor = getResources().getColor(R.color.livenessCloseIcon);
+        livenessCustomization.feedbackBackGroundColor = getResources().getColor(R.color.livenessfeedbackBg);
+        livenessCustomization.feedbackTextColor = getResources().getColor(R.color.livenessfeedbackText);
+        livenessCustomization.feedbackTextSize = 18;
+        livenessCustomization.feedBackframeMessage = "Frame Your Face";
+        livenessCustomization.feedBackAwayMessage = "Move Phone Away";
+        livenessCustomization.feedBackOpenEyesMessage = "Keep Open Your Eyes";
+        livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
+        livenessCustomization.feedBackCenterMessage = "Center Your Face";
+
+        uri = Utils.getOutputMediaFile(this);
+        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_api_key", uri);
+        startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
     }
 
     private void openCamera() {
@@ -374,8 +438,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     @Override
     public void onFaceMatch(float score) {
         tvFaceMatchScore.setText(String.format("%.2f %%", score));
-//        loutLivenessScore.setVisibility(View.VISIBLE);
-        tvFaceMatchScore.setVisibility(View.VISIBLE);
+        loutLivenessScore.setVisibility(View.VISIBLE);
         loutFmScore.setVisibility(View.VISIBLE);
     }
 
@@ -391,9 +454,8 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
 
     @Override
     public void onInitEngine(int i) {
-//        Logger.e("TAG", "onInitEngine: " + i);
         if (i != -1) {
-            performClick(true, false);
+            performClick(false, true);
         }
     }
 

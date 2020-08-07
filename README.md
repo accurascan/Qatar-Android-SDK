@@ -49,6 +49,8 @@ Step 3: Add the dependency:<br />
         ...
         // for Accura qatar OCR
         implementation 'com.github.accurascan:Qatar-SDK-Android:1.1.0'
+        // for liveness
+        implementation 'com.github.accurascan:Liveness-Android:1.0.2'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
@@ -352,8 +354,80 @@ Step 4: Add files to project assets folder:<br />
         }
     }
 
+## 2. Setup Accura Liveness
 
-## 2. Setup Accura Face Match
+    Contact to connect@accurascan.com to Create Api key for liveness
+
+#### Step 1 : Add following code in Manifest.
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/provider_paths" />
+    </provider>
+
+#### Step 2 : Open camera for liveness Detectcion.
+
+    Must to Grant camera and storage permission
+
+    private final static int ACCURA_LIVENESS_CAMERA = 100;
+
+    // To customize your screen theme and feed back messages
+    LivenessCustomization livenessCustomization = new LivenessCustomization();
+
+    livenessCustomization.backGroundColor = getResources().getColor(R.color.livenessBackground);
+    livenessCustomization.closeIconColor = getResources().getColor(R.color.livenessCloseIcon);
+    livenessCustomization.feedbackBackGroundColor = Color.TRANSPARENT;
+    livenessCustomization.feedbackTextColor = Color.BLACK;
+    livenessCustomization.feedbackTextSize = 18;
+    livenessCustomization.feedBackframeMessage = "Frame Your Face";
+    livenessCustomization.feedBackAwayMessage = "Move Phone Away";
+    livenessCustomization.feedBackOpenEyesMessage = "Keep Open Your Eyes";
+    livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
+    livenessCustomization.feedBackCenterMessage = "Center Your Face";
+
+    uri = Utils.getOutputMediaFile(this);
+    // must have to call SelfieCameraActivity.getCustomIntent() to create intent
+    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_api_key", uri);
+    startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
+
+
+    // Handle accura liveness result.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == ACCURA_LIVENESS_CAMERA && data != null) {
+                AccuraVerificationResult result = data.getParcelableExtra("Accura.liveness");
+                if (result == null) {
+                    return;
+                }
+                if (result.getStatus().equals("1")) {
+                    // result get bitmap of face by using following code
+                    Bitmap bitmap = result.getFaceBiometrics();
+                    double livenessScore = result.getLivenessResult().getLivenessScore() * 100.0;
+                    Toast.makeText(this, "Liveness Score : " + livenessScore, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+
+## 3. Setup Accura Face Match
 
 #### Step 1 : Simple Usage to face match in your app.
 

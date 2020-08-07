@@ -85,7 +85,7 @@
                         style="@style/ResultButtonLayout"
                         android:layout_marginStart="0dp"
                         android:layout_marginEnd="0dp"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <LinearLayout
                             android:id="@+id/btn_liveness"
@@ -149,7 +149,7 @@
                     <LinearLayout
                         android:id="@+id/llFaceMatchScore"
                         style="@style/ResultButtonLayout"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:id="@+id/btn_fm"
