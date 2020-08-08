@@ -50,7 +50,7 @@ Step 3: Add the dependency:<br />
         // for Accura qatar OCR
         implementation 'com.github.accurascan:Qatar-SDK-Android:1.1.0'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.0.2'
+        implementation 'com.github.accurascan:Liveness-Android:1.0.3'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
@@ -356,7 +356,7 @@ Step 4: Add files to project assets folder:<br />
 
 ## 2. Setup Accura Liveness
 
-    Contact to connect@accurascan.com to Create Api key for liveness
+    Contact to connect@accurascan.com to get Url for liveness
 
 #### Step 1 : Add following code in Manifest.
 
@@ -368,17 +368,34 @@ Step 4: Add files to project assets folder:<br />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="${applicationId}.provider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/provider_paths" />
-    </provider>
+    <application
+        ...
+        android:networkSecurityConfig="@xml/network_security_config"
+        >
 
-#### Step 2 : Open camera for liveness Detectcion.
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+     </application>
+
+#### Step 2 :  Add following code to Application class or MainActivity for hostname verification
+
+        new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
+                return hv.verify("your url host name", session);
+            }
+        };
+
+#### Step 3 : Open camera for liveness Detectcion.
 
     Must to Grant camera and storage permission
 
@@ -400,7 +417,7 @@ Step 4: Add files to project assets folder:<br />
 
     uri = Utils.getOutputMediaFile(this);
     // must have to call SelfieCameraActivity.getCustomIntent() to create intent
-    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_api_key", uri);
+    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url", uri);
     startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
 
 

@@ -410,7 +410,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackCenterMessage = "Center Your Face";
 
         uri = Utils.getOutputMediaFile(this);
-        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_api_key", uri);
+        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url", uri);
         startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
     }
 
