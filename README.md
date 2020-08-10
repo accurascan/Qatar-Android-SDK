@@ -6,7 +6,7 @@ Below steps to setup Accura SDK's to your project.
 
 ## Install Qatar SDK in to your App
 
-Step 1: Add the JitPack repository to your build file:
+#### Step 1: Add the JitPack repository to your build file:
     Add it in your root build.gradle at the end of repositories.
 
     allprojects {
@@ -19,11 +19,11 @@ Step 1: Add the JitPack repository to your build file:
         }
     }
 
-Step 2. Add the token to `gradle.properties`:
+#### Step 2. Add the token to `gradle.properties`:
 
     authToken=jp_lo9e8qo0o1bt4ofne9hob61v19
 
-Step 3: Add the dependency:<br />
+#### Step 3: Add the dependency:<br />
     Set AccuraOcr as a dependency to our app level `build.gradle` file.
 
     android {
@@ -50,12 +50,12 @@ Step 3: Add the dependency:<br />
         // for Accura qatar OCR
         implementation 'com.github.accurascan:Qatar-SDK-Android:1.1.0'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.0.3'
+        implementation 'com.github.accurascan:Liveness-Android:1.0.4'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
 
-Step 4: Add files to project assets folder:<br />
+#### Step 4: Add files to project assets folder:<br />
     Create assets folder under app/src/main and add licence file in to assets folder.<br />
     - key.licence // for Accura Qatar <br />
     - accuraface.license // for Accura Face Match <br />
@@ -362,8 +362,6 @@ Step 4: Add files to project assets folder:<br />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -373,31 +371,21 @@ Step 4: Add files to project assets folder:<br />
         android:networkSecurityConfig="@xml/network_security_config"
         >
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
      </application>
 
-#### Step 2 :  Add following code to Application class or MainActivity for hostname verification
+#### Step 2 :  Add following code to your Application class or MainActivity for hostname verification
 
-        new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-                return hv.verify("your url host name", session);
-            }
-        };
+    new HostnameVerifier() {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
+            return hv.verify("your url host name", session);
+        }
+    };
 
 #### Step 3 : Open camera for liveness Detectcion.
 
-    Must to Grant camera and storage permission
+    Must to Grant camera permission
 
     private final static int ACCURA_LIVENESS_CAMERA = 100;
 
@@ -415,9 +403,8 @@ Step 4: Add files to project assets folder:<br />
     livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
     livenessCustomization.feedBackCenterMessage = "Center Your Face";
 
-    uri = Utils.getOutputMediaFile(this);
     // must have to call SelfieCameraActivity.getCustomIntent() to create intent
-    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url", uri);
+    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
     startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
 
 
@@ -442,7 +429,6 @@ Step 4: Add files to project assets folder:<br />
             }
         }
     }
-
 
 ## 3. Setup Accura Face Match
 

@@ -69,7 +69,7 @@ dependencies {
     // for Accura qatar ocr
     implementation 'com.github.accurascan:Qatar-SDK-Android:1.1.0'
     // for liveness
-    implementation 'com.github.accurascan:Liveness-Android:1.0.3'
+    implementation 'com.github.accurascan:Liveness-Android:1.0.4'
     // for Accura Face Match
     implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
 

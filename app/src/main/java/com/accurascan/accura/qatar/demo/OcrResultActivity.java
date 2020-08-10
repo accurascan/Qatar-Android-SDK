@@ -50,7 +50,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     private View loutFmScore, loutLivenessScore;
     OcrData.MapData Frontdata;
     OcrData.MapData Backdata;
-    private Uri uri;
     private Bitmap face1,face2;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -316,7 +315,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                         if (result.getLivenessResult() == null) {
                             return;
                         }
-                        if (result.getLivenessResult().getStatus()) {
+                        if (result.getLivenessResult().getLivenessStatus()) {
                             Bitmap face2 = result.getFaceBiometrics();
 
                             if (face2 != null) {
@@ -409,8 +408,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
         livenessCustomization.feedBackCenterMessage = "Center Your Face";
 
-        uri = Utils.getOutputMediaFile(this);
-        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url", uri);
+        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
         startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
     }
 

@@ -23,12 +23,6 @@ import java.text.SimpleDateFormat;
 
 public class Utils {
 
-    public static boolean isNetworkAvailable(Context mContext) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
     public static void hideKeyboard(Activity context) {
         // Check if no view has focus
@@ -96,30 +90,4 @@ public class Utils {
 
     }
 
-    public static Uri getOutputMediaFile(Context context) {
-        File mediaStorageDir = new File(context.getFilesDir(), "CameraDemo");
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(System.currentTimeMillis());
-        File file = null;
-        try {
-            file = File.createTempFile(
-                    "IMG_",  // prefix
-                    ".jpg",         // suffix
-                    mediaStorageDir      // directory
-            );
-            return Uri.fromFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            file = new File(mediaStorageDir, "IMG_" + timeStamp + ".jpg");
-            return Uri.fromFile(file);
-        }
-
-    }
 }
