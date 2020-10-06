@@ -246,10 +246,8 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return String.format("Scan Front Side of %s", cardName);
             case RecogEngine.SCAN_TITLE_OCR_BACK: // for back side ocr
                 return String.format("Scan Back Side of %s", cardName);
-            case RecogEngine.SCAN_TITLE_MRZ_FRONT:// for front side MRZ
+            case RecogEngine.SCAN_TITLE_MRZ:// for front side MRZ
                 return "Scan Front Side of Document";
-            case RecogEngine.SCAN_TITLE_MRZ_BACK: // for back side MRZ
-                return "Now Scan Back Side of Document";
             default: return "";
         }
     }
@@ -262,6 +260,12 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return "Bring card near to frame.";
             case "3":
                 return "Processing...";
+            case "4":
+                return "Face not detected";
+            case "5":
+                return "Passport MRZ not detected";
+            case "6":
+                return "MRZ not detected";
             default:
                 return s;
         }

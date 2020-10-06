@@ -2,7 +2,6 @@ package com.accurascan.accura.qatar.demo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +69,12 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
             if (g_recogResult == null) {
                 return;
             }
+
+            if (g_recogResult.faceBitmap != null) {
+                face1 = g_recogResult.faceBitmap;
+            }
+            setData();
+
             setMRZData(g_recogResult);
 
             if (g_recogResult.docFrontBitmap != null) {
@@ -84,11 +89,6 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                 ly_back.setVisibility(View.GONE);
             }
 
-
-            if (g_recogResult.faceBitmap != null) {
-                face1 = g_recogResult.faceBitmap;
-            }
-            setData();
         }
     }
 
@@ -317,7 +317,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                         }
                         if (result.getLivenessResult().getLivenessStatus()) {
                             Bitmap face2 = result.getFaceBiometrics();
-
+                            Glide.with(OcrResultActivity.this).load(face2).centerCrop().into(ivUserProfile2);
                             if (face2 != null) {
                                 faceHelper.setMatchImage(face2);
                             }
@@ -354,7 +354,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                 } else {
                     Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
-            } else if (requestCode == 101) {
+            } else if (requestCode == 100) {
                 if (faceHelper != null && face1 != null) {
                     faceHelper.setInputImage(face1);
                 }
@@ -404,7 +404,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedbackTextSize = 18;
         livenessCustomization.feedBackframeMessage = "Frame Your Face";
         livenessCustomization.feedBackAwayMessage = "Move Phone Away";
-        livenessCustomization.feedBackOpenEyesMessage = "Keep Open Your Eyes";
+        livenessCustomization.feedBackOpenEyesMessage = "Keep Your Eyes Open";
         livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
         livenessCustomization.feedBackCenterMessage = "Center Your Face";
 
@@ -466,8 +466,9 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     public void onRightDetect(FaceDetectionResult faceDetectionResult) {
         if (faceDetectionResult != null) {
             try {
-                face2 = BitmapHelper.createFromARGB(faceDetectionResult.getNewImg(), faceDetectionResult.getNewWidth(), faceDetectionResult.getNewHeight());
-                Glide.with(this).load(faceDetectionResult.getFaceImage(face2)).centerCrop().into(ivUserProfile2);
+                Bitmap bitmap = BitmapHelper.createFromARGB(faceDetectionResult.getNewImg(), faceDetectionResult.getNewWidth(), faceDetectionResult.getNewHeight());
+                face2 = faceDetectionResult.getFaceImage(bitmap);
+                Glide.with(this).load(face2).centerCrop().into(ivUserProfile2);
                 loutImg2.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 e.printStackTrace();

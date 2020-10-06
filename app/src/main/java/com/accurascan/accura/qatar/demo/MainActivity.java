@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             activity.modelList = recogEngine.getCardList(activity);
 
                         recogEngine.setBlurPercentage(activity, 50, "Blur detect in document");
-                        recogEngine.setFaceBlurPercentage(activity, 50, "Blur detected over face");
+                        recogEngine.setFaceBlurPercentage(activity, 55, "Blur detected over face");
                         recogEngine.setGlarePercentage(activity, 6, 98, "Glare detect in document");
                         recogEngine.isCheckPhotoCopy(activity, false, "Can not accept Photo Copy Document");
                         recogEngine.SetHologramDetection(activity, true, "Hologram Detected");
