@@ -24,6 +24,7 @@ Below steps to setup Accura SDK's to your project.
     authToken=jp_lo9e8qo0o1bt4ofne9hob61v19
 
 #### Step 3: Add the dependency:<br />
+```
     Set AccuraOcr as a dependency to our app level `build.gradle` file.
 
     android {
@@ -54,17 +55,19 @@ Below steps to setup Accura SDK's to your project.
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
-
+```
 #### Step 4: Add files to project assets folder:<br />
-    Create assets folder under app/src/main and add licence file in to assets folder.<br />
-    - key.licence // for Accura Qatar <br />
+```
+    Create assets folder under app/src/main and add license file in to assets folder.<br />
+    - key.license // for Accura Qatar <br />
     - accuraface.license // for Accura Face Match <br />
-    Generate your Accura licence from https://accurascan.com/developer/dashboard
+    Generate your Accura license from https://accurascan.com/developer/dashboard
+```
 
 ## 1. Setup Accura Qatar OCR
 
 #### Step 1 : To initialize sdk on app start:
-
+```
     RecogEngine recogEngine = new RecogEngine();
     RecogEngine.SDKModel sdkModel = recogEngine.initEngine(your activity context);
 
@@ -84,80 +87,51 @@ Below steps to setup Accura SDK's to your project.
             model.getCard_name()  // getting card name
         }
     }
+```
+##### Update filters like below.</br>
+  Call this function after initialize sdk if license is valid(sdkModel.i > 0)
+   * Set Blur Percentage to allow blur on document
 
-    Some customized function below.
-    Call this function after initialize sdk if license is valid(sdkModel.i > 0)
+        ```
+		//0 for clean document and 100 for Blurry document
+		recogEngine.setBlurPercentage(Context context, int /*blurPercentage*/50);
+		```
+   * Set Face blur Percentage to allow blur on detected Face
 
-    /**
-     * Set Blur Percentage to allow blur on document
-     *
-     * @param context        Activity context
-     * @param blurPercentage is 0 to 100, 0 - clean document and 100 - Blurry document
-     * @param errorMessage   To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.setBlurPercentage(Context context, int /*blurPercentage*/50, String errorMessage);
-    
-    /**
-     * Set Blur Percentage to allow blur on detected Face
-     *
-     * @param context            Activity context
-     * @param faceBlurPercentage is 0 to 100, 0 - clean face and 100 - Blurry face
-     * @param errorMessage       To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.setFaceBlurPercentage(Context context, int /*faceBlurPercentage*/50, String errorMessage);
-    
-    /**
-     * @param context        Activity context
-     * @param minPercentage  Min value
-     * @param maxPercentage  Max value
-     * @param errorMessage   To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.setGlarePercentage(Context context, int /*minPercentage*/6, int /*maxPercentage*/98, String errorMessage);
-    
-    /**
-     * Set CheckPhotoCopy to allow photocopy document or not
-     *
-     * @param context          Activity context
-     * @param isCheckPhotoCopy if true then reject photo copy document else vice versa
-     * @param errorMessage     To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.isCheckPhotoCopy(Context context, boolean /*isCheckPhotoCopy*/false, String errorMessage);
-    
-    /**
-     * set Hologram detection to allow hologram on face or not
-     *
-     * @param context          Activity context
-     * @param isDetectHologram if true then reject face if hologram in face else it is allow.
-     * @param errorMessage     To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.SetHologramDetection(Context context, boolean /*isDetectHologram*/true, String errorMessage);
+        ```
+		// 0 for clean face and 100 for Blurry face
+		recogEngine.setFaceBlurPercentage(Context context, int /*faceBlurPercentage*/50);
+        ```
+   * Set Glare Percentage to detect Glare on document
 
-    /**
-     * set light tolerance to detect light on document if low light
-     *
-     * @param context        Activity context
-     * @param tolerance      is 0 to 100, 0 - allow full dark document and 100 - allow full bright document
-     * @param errorMessage   To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.setLowLightTolerance(Context context, int /*tolerance*/30, String errorMessage);
+        ```
+		// Set min and max percentage for glare
+		recogEngine.setGlarePercentage(Context context, int /*minPercentage*/6, int /*maxPercentage*/98);
+		```
+   * Set Photo Copy to allow photocopy document or not
 
-    /**
-     * set motion threshold to detect motion on camera document
-     *
-     * @param context          Activity context
-     * @param motionThreshold  is 1 to 100, 1 means it allows 1% motion on document and 100 means it
-                               can not detect motion and allow document to scan.
-     * @param errorMessage     To display your custom message
-     * @return 1 if success else 0
-     */
-    recogEngine.setMotionThreshold(Context context, int /*motionThreshold*/18, @NonNull String message, String errorMessage);
+        ```
+		// Set min and max percentage for glare
+		recogEngine.isCheckPhotoCopy(Context context, boolean /*isCheckPhotoCopy*/false);
+		```
+   * Set Hologram detection to verify the hologram on the face
 
+        ```
+		// true to check hologram on face
+		recogEngine.SetHologramDetection(Context context, boolean /*isDetectHologram*/true);
+		```
+   * Set light tolerance to detect light on document
+
+        ```
+        // 0 for full dark document and 100 for full bright document
+        recogEngine.setLowLightTolerance(Context context, int /*tolerance*/30);
+        ```
+   * Set motion threshold to detect motion on camera document
+		```
+        // 1 - allows 1% motion on document and
+        // 100 - it can not detect motion and allow document to scan.
+        recogEngine.setMotionThreshold(Context context, int /*motionThreshold*/18, @NonNull String message);
+        ```
 
 #### Step 2 : Set CameraView
 
@@ -254,7 +228,7 @@ Below steps to setup Accura SDK's to your project.
      * @param width    border layout width
      * @param height   border layout height
      */
-     
+
     @Override
     public void onUpdateLayout(int width, int height) {
         if (cameraView != null) cameraView.startOcrScan(false);
@@ -315,8 +289,6 @@ Below steps to setup Accura SDK's to your project.
     @Override
     public void onProcessUpdate(int titleCode, String message, boolean isFlip) {
         // display data on ui thread
-        // Check activity com.accurascan.accura.qatar.demo.OcrActivity.java to getTitleMessage(titleCode)
-        // and getErrorMessage(message)
         if (getTitleMessage(titleCode) != null) { // check
             Toast.makeText(this, getTitleMessage(titleCode), Toast.LENGTH_SHORT).show(); // display title
         }
@@ -334,6 +306,53 @@ Below steps to setup Accura SDK's to your project.
         // display data on ui thread
         // stop ocr if failed
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    // Customize messages in below function as per requirement
+    private String getTitleMessage(int titleCode) {
+        if (titleCode < 0) return null;
+        switch (titleCode){
+            case RecogEngine.SCAN_TITLE_OCR_FRONT:// for front side ocr;
+                return String.format("Scan Front Side of %s", cardName);
+            case RecogEngine.SCAN_TITLE_OCR_BACK: // for back side ocr
+                return String.format("Scan Back Side of %s", cardName);
+            case RecogEngine.SCAN_TITLE_MRZ:// for front side MRZ
+                return "Scan Front Side of Document";
+            default:return "";
+        }
+    }
+
+    private String getErrorMessage(String s){
+        switch (s){
+            case RecogEngine.ACCURA_ERROR_CODE_MOTION:
+                return "Keep Document Steady";
+            case RecogEngine.ACCURA_ERROR_CODE_DOCUMENT_IN_FRAME:
+                return "Keep document in frame";
+            case RecogEngine.ACCURA_ERROR_CODE_BRING_DOCUMENT_IN_FRAME:
+                return "Bring card near to frame.";
+            case RecogEngine.ACCURA_ERROR_CODE_PROCESSING:
+                return "Processing...";
+            case RecogEngine.ACCURA_ERROR_CODE_BLUR_DOCUMENT:
+                return "Blur detect in document";
+            case RecogEngine.ACCURA_ERROR_CODE_FACE_BLUR:
+                return "Blur detected over face";
+            case RecogEngine.ACCURA_ERROR_CODE_GLARE_DOCUMENT:
+                return "Glare detect in document";
+            case RecogEngine.ACCURA_ERROR_CODE_HOLOGRAM:
+                return "Hologram Detected";
+            case RecogEngine.ACCURA_ERROR_CODE_DARK_DOCUMENT:
+                return "Low lighting detected";
+            case RecogEngine.ACCURA_ERROR_CODE_PHOTO_COPY_DOCUMENT:
+                return "Can not accept Photo Copy Document";
+            case RecogEngine.ACCURA_ERROR_CODE_FACE:
+                return "Face not detected";
+            case RecogEngine.ACCURA_ERROR_CODE_MRZ:
+                return "MRZ not detected";
+            case RecogEngine.ACCURA_ERROR_CODE_PASSPORT_MRZ:
+                return "Passport MRZ not detected";
+            default:
+                return s;
+        }
     }
 
     // After getting result to restart scanning you have to set below code onActivityResult

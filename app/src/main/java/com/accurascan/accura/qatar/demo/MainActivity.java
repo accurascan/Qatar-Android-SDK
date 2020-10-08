@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
             MainActivity activity = mActivity.get();
             if (activity != null) {
                 try {
-                    // doWorkNative();
                     RecogEngine recogEngine = new RecogEngine();
+                    recogEngine.setDialog(false); // setDialog(false) To set your custom dialog for license validation
                     activity.sdkModel = recogEngine.initEngine(activity);
                     activity.responseMessage = activity.sdkModel.message;
                     if (activity.sdkModel.i >= 0) {
@@ -97,19 +97,20 @@ public class MainActivity extends AppCompatActivity {
                         if (activity.sdkModel.isOCREnable)
                             activity.modelList = recogEngine.getCardList(activity);
 
-                        recogEngine.setBlurPercentage(activity, 50, "Blur detect in document");
-                        recogEngine.setFaceBlurPercentage(activity, 55, "Blur detected over face");
-                        recogEngine.setGlarePercentage(activity, 6, 98, "Glare detect in document");
-                        recogEngine.isCheckPhotoCopy(activity, false, "Can not accept Photo Copy Document");
-                        recogEngine.SetHologramDetection(activity, true, "Hologram Detected");
-                        recogEngine.setLowLightTolerance(activity, 30, "Low lighting detected");
-                        recogEngine.setMotionData(activity, 18, "Keep Document Steady");
+                        recogEngine.setBlurPercentage(activity, 50);
+                        recogEngine.setFaceBlurPercentage(activity, 60);
+                        recogEngine.setGlarePercentage(activity, 6, 98);
+                        recogEngine.isCheckPhotoCopy(activity, false);
+                        recogEngine.SetHologramDetection(activity, true);
+                        recogEngine.setLowLightTolerance(activity, 30);
+                        recogEngine.setMotionThreshold(activity, 18);
 
                          activity.handler.sendEmptyMessage(1);
                     } else
                         activity.handler.sendEmptyMessage(0);
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             super.run();
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean verify(String hostname, SSLSession session) {
                 HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-                return hv.verify("your url host name", session);
+                return hv.verify("liveness url host name", session);
             }
         };
 

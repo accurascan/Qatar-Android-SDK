@@ -252,20 +252,34 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         }
     }
 
-    private String getErrorMessage(String s) {
-        switch (s) {
-            case "1":
+    private String getErrorMessage(String s){
+        switch (s){
+            case RecogEngine.ACCURA_ERROR_CODE_MOTION:
+                return "Keep Document Steady";
+            case RecogEngine.ACCURA_ERROR_CODE_DOCUMENT_IN_FRAME:
                 return "Keep document in frame";
-            case "2":
+            case RecogEngine.ACCURA_ERROR_CODE_BRING_DOCUMENT_IN_FRAME:
                 return "Bring card near to frame.";
-            case "3":
+            case RecogEngine.ACCURA_ERROR_CODE_PROCESSING:
                 return "Processing...";
-            case "4":
+            case RecogEngine.ACCURA_ERROR_CODE_BLUR_DOCUMENT:
+                return "Blur detect in document";
+            case RecogEngine.ACCURA_ERROR_CODE_FACE_BLUR:
+                return "Blur detected over face";
+            case RecogEngine.ACCURA_ERROR_CODE_GLARE_DOCUMENT:
+                return "Glare detect in document";
+            case RecogEngine.ACCURA_ERROR_CODE_HOLOGRAM:
+                return "Hologram Detected";
+            case RecogEngine.ACCURA_ERROR_CODE_DARK_DOCUMENT:
+                return "Low lighting detected";
+            case RecogEngine.ACCURA_ERROR_CODE_PHOTO_COPY_DOCUMENT:
+                return "Can not accept Photo Copy Document";
+            case RecogEngine.ACCURA_ERROR_CODE_FACE:
                 return "Face not detected";
-            case "5":
-                return "Passport MRZ not detected";
-            case "6":
+            case RecogEngine.ACCURA_ERROR_CODE_MRZ:
                 return "MRZ not detected";
+            case RecogEngine.ACCURA_ERROR_CODE_PASSPORT_MRZ:
+                return "Passport MRZ not detected";
             default:
                 return s;
         }
