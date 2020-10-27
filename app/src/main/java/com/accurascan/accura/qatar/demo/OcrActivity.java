@@ -280,6 +280,8 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return "MRZ not detected";
             case RecogEngine.ACCURA_ERROR_CODE_PASSPORT_MRZ:
                 return "Passport MRZ not detected";
+            case RecogEngine.ACCURA_ERROR_CODE_RETRYING:
+                return "Retrying";
             default:
                 return s;
         }

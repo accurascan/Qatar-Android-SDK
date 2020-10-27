@@ -49,7 +49,7 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.2'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3'
         // for liveness
         implementation 'com.github.accurascan:Liveness-Android:1.1.0'
         // for Accura Face Match
@@ -350,6 +350,8 @@ Below steps to setup Accura SDK's to your project.
                 return "MRZ not detected";
             case RecogEngine.ACCURA_ERROR_CODE_PASSPORT_MRZ:
                 return "Passport MRZ not detected";
+            case RecogEngine.ACCURA_ERROR_CODE_RETRYING:
+                return "Retrying";
             default:
                 return s;
         }
