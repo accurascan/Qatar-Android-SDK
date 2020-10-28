@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             activity.modelList = recogEngine.getCardList(activity);
 
                         recogEngine.setBlurPercentage(activity, 62);
-                        recogEngine.setFaceBlurPercentage(activity, 65);
+                        recogEngine.setFaceBlurPercentage(activity, 50);
                         recogEngine.setGlarePercentage(activity, 6, 98);
                         recogEngine.isCheckPhotoCopy(activity, false);
                         recogEngine.SetHologramDetection(activity, true);
