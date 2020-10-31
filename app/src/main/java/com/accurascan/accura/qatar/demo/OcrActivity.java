@@ -135,7 +135,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         if (cameraView != null) cameraView.onDestroy();
         super.onDestroy();
         Runtime.getRuntime().gc(); // to clear garbage
