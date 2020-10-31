@@ -49,7 +49,7 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.3'
         // for liveness
         implementation 'com.github.accurascan:Liveness-Android:1.1.0'
         // for Accura Face Match
@@ -216,7 +216,7 @@ Below steps to setup Accura SDK's to your project.
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         cameraView.onDestroy();
         super.onDestroy();
     }
