@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -24,10 +25,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.accurascan.libqatar.model.ContryModel;
+import com.accurascan.libqatar.util.AccuraLog;
 import com.accurascan.libqatar.util.Util;
 import com.docrecog.scan.RecogEngine;
 import com.docrecog.scan.RecogType;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
                     RecogEngine recogEngine = new RecogEngine();
                     recogEngine.setDialog(false); // setDialog(false) To set your custom dialog for license validation
                     activity.sdkModel = recogEngine.initEngine(activity);
+
+                    recogEngine.setPrintLogs(true); // set print logs false to disable logs and default it is true
+                    // Set all accura logs using AccuraLog.loge("TAG", "message");
+                    AccuraLog.loge(TAG, "Initialized Engine : " + activity.sdkModel.i + " -> " + activity.sdkModel.message);
+
                     activity.responseMessage = activity.sdkModel.message;
                     if (activity.sdkModel.i >= 0) {
 
@@ -114,6 +123,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             super.run();
+        }
+    }
+
+    public void printLog() {
+        File file = new File(Environment.getExternalStorageDirectory(), "AccuraQatar.log");
+        String command = "logcat -f "+ file.getPath() + " -v time *:V";
+        Log.d(TAG, "command: " + command);
+
+        try{
+            Runtime.getRuntime().exec(command);
+        }
+        catch(IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -142,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        printLog();  // Create Log file
 
         new HostnameVerifier() {
             @Override
