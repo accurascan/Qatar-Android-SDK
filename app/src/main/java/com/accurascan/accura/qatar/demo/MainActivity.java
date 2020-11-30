@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -137,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
         catch(IOException e){
             e.printStackTrace();
         }
+        Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        scanIntent.setData(Uri.fromFile(file));
+        sendBroadcast(scanIntent);
     }
 
     private Handler handler = new MyHandler(this);
@@ -164,8 +168,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        printLog();  // Create Log file
 
         new HostnameVerifier() {
             @Override
@@ -242,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doWork() {
+        printLog();  // Create Log file
+
         progressBar = new ProgressDialog(this);
         progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressBar.setMessage("Please wait...");
