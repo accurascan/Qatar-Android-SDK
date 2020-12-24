@@ -268,7 +268,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
             case RecogEngine.ACCURA_ERROR_CODE_MOTION:
                 return "Keep Document Steady";
             case RecogEngine.ACCURA_ERROR_CODE_DOCUMENT_IN_FRAME:
-                return "Keep document in frame";
+                return "Keep Qatar ID in frame";
             case RecogEngine.ACCURA_ERROR_CODE_BRING_DOCUMENT_IN_FRAME:
                 return "Bring card near to frame.";
             case RecogEngine.ACCURA_ERROR_CODE_PROCESSING:
@@ -293,6 +293,10 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return "Passport MRZ not detected";
             case RecogEngine.ACCURA_ERROR_CODE_RETRYING:
                 return "Retrying";
+            case RecogEngine.ACCURA_ERROR_CODE_WRONG_SIDE:
+                return "Scanning wrong side of document";
+            case RecogEngine.ACCURA_ERROR_CODE_UPSIDE_DOWN_SIDE:
+                return "Document is upside down. Place it properly";
             default:
                 return s;
         }

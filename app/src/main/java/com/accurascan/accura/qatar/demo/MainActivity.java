@@ -1,7 +1,9 @@
 package com.accurascan.accura.qatar.demo;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +27,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.accurascan.accura.qatar.demo.util.Utils;
+import com.accurascan.facedetection.utils.AccuraLivenessLog;
 import com.accurascan.libqatar.model.ContryModel;
 import com.accurascan.libqatar.util.AccuraLog;
-import com.accurascan.libqatar.util.Util;
 import com.docrecog.scan.RecogEngine;
 import com.docrecog.scan.RecogType;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     recogEngine.setDialog(false); // setDialog(false) To set your custom dialog for license validation
                     activity.sdkModel = recogEngine.initEngine(activity);
 
-                    recogEngine.setPrintLogs(true); // set print logs false to disable logs and default it is true
+                    recogEngine.setPrintLogs(true); // set print logs true to enable sdk logs
+                    AccuraLivenessLog.setDEBUG(true); // AccuraLivenessLog#setDEBUG true to enable sdk logs
                     // Set all accura logs using AccuraLog.loge("TAG", "message");
                     AccuraLog.loge(TAG, "Initialized Engine : " + activity.sdkModel.i + " -> " + activity.sdkModel.message);
 
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                             activity.modelList = recogEngine.getCardList(activity);
 
                         recogEngine.setBlurPercentage(activity, 62);
-                        recogEngine.setFaceBlurPercentage(activity, 50);
+                        recogEngine.setFaceBlurPercentage(activity, 70);
                         recogEngine.setGlarePercentage(activity, 6, 98);
                         recogEngine.isCheckPhotoCopy(activity, false);
                         recogEngine.SetHologramDetection(activity, true);
@@ -127,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // must have to required storage permission to print logs
     public void printLog() {
         File file = new File(Environment.getExternalStorageDirectory(), "AccuraQatar.log");
         String command = "logcat -f "+ file.getPath() + " -v time *:V";
@@ -183,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, OcrActivity.class);
                 RecogType.MRZ.attachTo(intent);
-                intent.putExtra("card_name", getResources().getString(R.string.passport_id_mrz));
+                intent.putExtra("card_name", getResources().getString(R.string.passport_mrz));
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
@@ -199,10 +206,49 @@ public class MainActivity extends AppCompatActivity {
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         cardAdapter = new CardListAdpter(this, cardList);
         rvCards.setAdapter(cardAdapter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Utils.isPermissionsGranted(this)) {
             requestCameraPermission();
         } else {
             doWork();
+        }
+    }
+
+    public boolean isGooglePlayServicesAvailable(Activity activity) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+        if(status != ConnectionResult.SUCCESS) {
+            if(googleApiAvailability.isUserResolvableError(status)) {
+                Dialog dialog = googleApiAvailability.getErrorDialog(activity, status, 2045);
+                dialog.setCancelable(false);
+                dialog.show();
+            }else {
+                GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(activity);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case 2045:
+                if (resultCode == Activity.RESULT_OK) {
+                    doWork();
+                }else {
+                    startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en_IN&gl=US")),200);
+                }
+                break;
+            case 200:
+                if (resultCode == Activity.RESULT_OK) {
+                    doWork();
+                } else {
+                    Toast.makeText(this, "Make sure device has google play service", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -244,6 +290,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doWork() {
+
+        if (!isGooglePlayServicesAvailable(this)) {
+            return;
+        }
         printLog();  // Create Log file
 
         progressBar = new ProgressDialog(this);

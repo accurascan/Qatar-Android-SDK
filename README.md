@@ -49,9 +49,9 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.3.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.3.2'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.1.0'
+        implementation 'com.github.accurascan:Liveness-Android:1.1.1'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
@@ -130,7 +130,7 @@ Below steps to setup Accura SDK's to your project.
 		```
         // 1 - allows 1% motion on document and
         // 100 - it can not detect motion and allow document to scan.
-        recogEngine.setMotionThreshold(Context context, int /*motionThreshold*/18, @NonNull String message);
+        recogEngine.setMotionThreshold(Context context, int /*motionThreshold*/18);
         ```
 
 #### Step 2 : Set CameraView
@@ -327,7 +327,7 @@ Below steps to setup Accura SDK's to your project.
             case RecogEngine.ACCURA_ERROR_CODE_MOTION:
                 return "Keep Document Steady";
             case RecogEngine.ACCURA_ERROR_CODE_DOCUMENT_IN_FRAME:
-                return "Keep document in frame";
+                return "Keep Qatar ID in frame";
             case RecogEngine.ACCURA_ERROR_CODE_BRING_DOCUMENT_IN_FRAME:
                 return "Bring card near to frame.";
             case RecogEngine.ACCURA_ERROR_CODE_PROCESSING:
@@ -352,6 +352,10 @@ Below steps to setup Accura SDK's to your project.
                 return "Passport MRZ not detected";
             case RecogEngine.ACCURA_ERROR_CODE_RETRYING:
                 return "Retrying";
+            case RecogEngine.ACCURA_ERROR_CODE_WRONG_SIDE:
+                return "Scanning wrong side of document";
+            case RecogEngine.ACCURA_ERROR_CODE_UPSIDE_DOWN_SIDE:
+                return "Document is upside down. Place it properly";
             default:
                 return s;
         }
@@ -423,6 +427,10 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.feedBackOpenEyesMessage = "Keep Open Your Eyes";
     livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
     livenessCustomization.feedBackCenterMessage = "Center Your Face";
+    livenessCustomization.feedBackMultipleFaceMessage = "Multiple Face Detected";
+    livenessCustomization.feedBackHeadStraightMessage = "Keep Your Head Straight";
+    livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
+    livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
 
     // must have to call SelfieCameraActivity.getCustomIntent() to create intent
     Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");

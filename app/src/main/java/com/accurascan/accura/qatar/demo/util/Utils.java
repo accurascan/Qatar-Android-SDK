@@ -1,6 +1,8 @@
 package com.accurascan.accura.qatar.demo.util;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 
 import java.io.ByteArrayOutputStream;
@@ -9,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 public class Utils {
 
@@ -44,4 +47,13 @@ public class Utils {
         return f;
     }
 
+    public static boolean isPermissionsGranted(Context context) {
+        String[] permissions = new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        for (String permission : permissions) {
+            if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

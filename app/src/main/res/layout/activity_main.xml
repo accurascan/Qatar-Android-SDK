@@ -33,7 +33,7 @@
                     android:layout_margin="@dimen/_5dp"
                     android:background="@drawable/btn_bg_gray"
                     android:padding="@dimen/_15dp"
-                    android:text="@string/passport_id_mrz"
+                    android:text="@string/passport_mrz"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:typeface="ALLER_STD_REG"

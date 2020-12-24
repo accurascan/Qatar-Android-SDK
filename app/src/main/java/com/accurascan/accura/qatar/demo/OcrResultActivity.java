@@ -268,7 +268,8 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         addLayout("Correct Document check No.", recogResult.correctdocchecksum);
         addLayout("Country", recogResult.country);
         addLayout("Nationality", recogResult.nationality);
-        addLayout("Sex", recogResult.sex);
+        String s = (recogResult.sex.equals("M")) ? "Male" : ((recogResult.sex.equals("F")) ? "Female" : recogResult.sex);
+        addLayout("Sex", s);
         addLayout("Date of Birth", recogResult.birth);
         addLayout("Birth Check No.", recogResult.birthchecksum);
         addLayout("Correct Birth Check No.", recogResult.correctbirthchecksum);
@@ -407,6 +408,10 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackOpenEyesMessage = "Keep Your Eyes Open";
         livenessCustomization.feedBackCloserMessage = "Move Phone Closer";
         livenessCustomization.feedBackCenterMessage = "Center Your Face";
+        livenessCustomization.feedBackMultipleFaceMessage = "Multiple Face Detected";
+        livenessCustomization.feedBackHeadStraightMessage = "Keep Your Head Straight";
+        livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
+        livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
 
         Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
         startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
