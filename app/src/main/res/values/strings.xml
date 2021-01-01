@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AccuraQatarDemo</string>
 
-    <string name="passport_mrz"><![CDATA[Passport & ID MRZ]]></string>
+    <string name="passport_mrz"><![CDATA[Passport MRZ]]></string>
     <string name="liveness">Liveness</string>
     <string name="face_match">Face Match</string>
 </resources>
