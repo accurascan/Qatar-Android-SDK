@@ -49,9 +49,9 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.6'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.7'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.1.1'
+        implementation 'com.github.accurascan:Liveness-Android:1.2.1'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
@@ -180,7 +180,8 @@ Below steps to setup Accura SDK's to your project.
         cameraView = new CameraView(this);
         if (recogType == RecogType.OCR) {
             // must have to set data for RecogType.OCR
-            cameraView.setCountryId(countryId).setCardId(cardId);
+            cameraView.setCountryId(countryId).setCardId(cardId)
+            		.setMinFrameForValidate(3); // support only odd numbers like 3,5...
         }
         cameraView.setRecogType(recogType) // is for qatar Id card or MRZ document
                 .setView(cameraContainer) // To add camera view
@@ -288,22 +289,27 @@ Below steps to setup Accura SDK's to your project.
      */
     @Override
     public void onProcessUpdate(int titleCode, String message, boolean isFlip) {
-        // display data on ui thread
-        if (getTitleMessage(titleCode) != null) { // check
-            Toast.makeText(this, getTitleMessage(titleCode), Toast.LENGTH_SHORT).show(); // display title
-        }
-        if (message != null) {
-            Toast.makeText(this, getErrorMessage(message), Toast.LENGTH_SHORT).show(); // display message
-        }
-        if (isFlip) {
-        // To set default animation or remove this line to set your custom animation after successfully scan front side.
-            cameraView.flipImage(imageFlip);
-        }
+        // make sure update view on ui thread
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (getTitleMessage(titleCode) != null) { // check
+                    Toast.makeText(this, getTitleMessage(titleCode), Toast.LENGTH_SHORT).show(); // display title
+                }
+                if (message != null) {
+                    Toast.makeText(this, getErrorMessage(message), Toast.LENGTH_SHORT).show(); // display message
+                }
+                if (isFlip) {
+                // To set default animation or remove this line to set your custom animation after successfully scan front side.
+                    cameraView.flipImage(imageFlip);
+                }
+            }
+        });
     }
 
     @Override
     public void onError(String errorMessage) {
-        // display data on ui thread
+        // make sure update view on ui thread
         // stop ocr if failed
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
@@ -404,7 +410,7 @@ Below steps to setup Accura SDK's to your project.
         @Override
         public boolean verify(String hostname, SSLSession session) {
             HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-            return hv.verify("your url host name", session);
+            return hv.verify("your liveness url host name", session);
         }
     };
 
@@ -431,6 +437,12 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.feedBackHeadStraightMessage = "Keep Your Head Straight";
     livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
     livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
+    
+    // 0 for clean face and 100 for Blurry face or -1 to remove blur filter
+    livenessCustomization.setBlurPercentage(80/*blurPercentage*/); // To allow blur on face
+    
+    // Set min and max percentage for glare or set it -1 to remove glare filter
+    livenessCustomization.setGlarePercentage(6/*glareMinPercentage*/, 99/*glareMaxPercentage*/);
 
     // must have to call SelfieCameraActivity.getCustomIntent() to create intent
     Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");

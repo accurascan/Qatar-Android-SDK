@@ -318,7 +318,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                         }
                         if (result.getLivenessResult().getLivenessStatus()) {
                             Bitmap face2 = result.getFaceBiometrics();
-                            Glide.with(OcrResultActivity.this).load(face2).centerCrop().into(ivUserProfile2);
+                            Glide.with(OcrResultActivity.this).load(face2).into(ivUserProfile2);
                             if (face2 != null) {
                                 faceHelper.setMatchImage(face2);
                             }
@@ -413,6 +413,9 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
         livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
 
+        livenessCustomization.setBlurPercentage(80);
+        livenessCustomization.setGlarePercentage(-1, -1);
+
         Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
         startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
     }
@@ -473,7 +476,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
             try {
                 Bitmap bitmap = BitmapHelper.createFromARGB(faceDetectionResult.getNewImg(), faceDetectionResult.getNewWidth(), faceDetectionResult.getNewHeight());
                 face2 = faceDetectionResult.getFaceImage(bitmap);
-                Glide.with(this).load(face2).centerCrop().into(ivUserProfile2);
+                Glide.with(this).load(face2).into(ivUserProfile2);
                 loutImg2.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 e.printStackTrace();

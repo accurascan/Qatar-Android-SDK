@@ -104,7 +104,8 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         cameraView = new CameraView(this);
         if (recogType == RecogType.OCR) {
             // must have to set data for RecogType.OCR
-            cameraView.setCountryId(countryId).setCardId(cardId);
+            cameraView.setCountryId(countryId).setCardId(cardId)
+                    .setMinFrameForValidate(3); // support only odd numbers of frame
         }
         cameraView.setRecogType(recogType)
                 .setView(linearLayout) // To add camera view
