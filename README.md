@@ -51,7 +51,7 @@ Below steps to setup Accura SDK's to your project.
         // for Accura qatar OCR
         implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.7'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.2.0'
+        implementation 'com.github.accurascan:Liveness-Android:1.2.1'
         // for Accura Face Match
         implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
     }
@@ -439,7 +439,7 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
     
     // 0 for clean face and 100 for Blurry face or -1 to remove blur filter
-    livenessCustomization.setBlurPercentage(75/*blurPercentage*/); // To allow blur on face
+    livenessCustomization.setBlurPercentage(80/*blurPercentage*/); // To allow blur on face
     
     // Set min and max percentage for glare or set it -1 to remove glare filter
     livenessCustomization.setGlarePercentage(6/*glareMinPercentage*/, 99/*glareMaxPercentage*/);

@@ -413,7 +413,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
         livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
 
-        livenessCustomization.setBlurPercentage(75);
+        livenessCustomization.setBlurPercentage(80);
         livenessCustomization.setGlarePercentage(-1, -1);
 
         Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
