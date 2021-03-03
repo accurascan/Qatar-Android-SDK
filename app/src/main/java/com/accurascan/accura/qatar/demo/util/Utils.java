@@ -15,6 +15,9 @@ import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 public class Utils {
 
+    public static final String DATABASE_SERVER_URL = "your server url";
+    public static final String DATABASE_SERVER_KEY = "your server api key";
+
     public static File fileFromBitmap(Context context, Bitmap bitmap, String filename) {
         //create a file to write bitmap data
         File f = new File(context.getExternalCacheDir(), filename);

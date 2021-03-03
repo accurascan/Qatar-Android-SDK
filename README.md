@@ -21,7 +21,7 @@ Below steps to setup Accura SDK's to your project.
 
 #### Step 2. Add the token to `gradle.properties`:
 
-    authToken=jp_lo9e8qo0o1bt4ofne9hob61v19
+    authToken=jp_9ldoc7h8fl5gbk4rsojgdiupa9
 
 #### Step 3: Add the dependency:<br />
 ```
@@ -48,12 +48,12 @@ Below steps to setup Accura SDK's to your project.
     }
     dependencies {
         ...
-        // for Accura qatar OCR
-        implementation 'com.github.accurascan:Qatar-SDK-Android:1.3.7'
+        // for Accura qatar ocr
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.0.0'
         // for liveness
-        implementation 'com.github.accurascan:Liveness-Android:1.2.1'
+        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.0.2'
         // for Accura Face Match
-        implementation 'com.github.accurascan:AccuraFaceMatch:1.0'
+        implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.0.0'
     }
 ```
 #### Step 4: Add files to project assets folder:<br />
@@ -187,6 +187,7 @@ Below steps to setup Accura SDK's to your project.
                 .setView(cameraContainer) // To add camera view
                 .setOcrCallback(this)  // To get Update and Success Callback
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible
+                .setAPIData("your server url", "your server api key") // to send data on server
 	//                Optional field
 	//                .setEnableMediaPlayer(false) // false to disable sound and true to enable sound. Default it's true
 	//                .setCustomMediaPlayer(MediaPlayer.create(this, com.accurascan.ocr.mrz.R.raw.beep)) // To add custom sound make sure media player is enable.
@@ -312,6 +313,12 @@ Below steps to setup Accura SDK's to your project.
         // make sure update view on ui thread
         // stop ocr if failed
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+    
+    @Override
+    public void onAPIError(String errorMessage) {
+        Runnable runnable = () -> Toast.makeText(OcrActivity.this, "Failed to send data on server -> " + errorMessage, Toast.LENGTH_LONG).show();
+        runOnUiThread(runnable);
     }
 
     // Customize messages in below function as per requirement
@@ -445,7 +452,8 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.setGlarePercentage(6/*glareMinPercentage*/, 99/*glareMaxPercentage*/);
 
     // must have to call SelfieCameraActivity.getCustomIntent() to create intent
-    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
+    // kycId is OcrData.getKycId() for qatar id card and RecogResult.kycId for passport MRZ document
+    Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_liveness_url","your server url", "your server api key", kycId);
     startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
 
 
@@ -466,6 +474,9 @@ Below steps to setup Accura SDK's to your project.
                     Toast.makeText(this, "Liveness Score : " + livenessScore, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+                if (result.getLivenessId() == null) {
+                    Toast.makeText(OcrResultActivity.this, "Failed to send data on server -> "+result.getApiErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -511,6 +522,7 @@ Below steps to setup Accura SDK's to your project.
                 // also use some other method for for face match
                 // must have to helper.setInputImage first and then helper.setMatchImage
                 // helper.setInputImage(uri1);
+                // FaceHelper.setApiData("your server url", "your server api key", AccuraVerificationResult.getLivenessId()) 
                 // helper.setMatchImage(uri2);
 
             }
