@@ -50,6 +50,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
     OcrData.MapData Frontdata;
     OcrData.MapData Backdata;
     private Bitmap face1,face2;
+    private String kycId = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,13 +64,14 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
             if (ocrData == null) {
                 return;
             }
+            kycId = ocrData.getKycId();
             setOcrData(ocrData);
         } else if (RecogType.detachFrom(getIntent()) == RecogType.MRZ) {
             RecogResult g_recogResult = RecogResult.getRecogResult();
             if (g_recogResult == null) {
                 return;
             }
-
+            kycId = g_recogResult.kycId;
             if (g_recogResult.faceBitmap != null) {
                 face1 = g_recogResult.faceBitmap;
             }
@@ -312,6 +314,10 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
 
                     faceHelper.setInputImage(face1);
 
+                    if (result.getLivenessId() == null) {
+                        Toast.makeText(OcrResultActivity.this, "Failed to send data on server -> "+result.getApiErrorMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
                     if (result.getFaceBiometrics() != null) {
                         if (result.getLivenessResult() == null) {
                             return;
@@ -320,6 +326,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                             Bitmap face2 = result.getFaceBiometrics();
                             Glide.with(OcrResultActivity.this).load(face2).into(ivUserProfile2);
                             if (face2 != null) {
+                                faceHelper.setApiData(Utils.DATABASE_SERVER_URL, Utils.DATABASE_SERVER_KEY, result.getLivenessId());
                                 faceHelper.setMatchImage(face2);
                             }
                             setLivenessData(result.getLivenessResult().getLivenessScore() * 100.0 + "");
@@ -353,7 +360,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
                 if (result.getStatus().equals("1")) {
                     handleVerificationSuccessResult(result);
                 } else {
-                    Toast.makeText(this, result.getStatus() + " " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == 100) {
                 if (faceHelper != null && face1 != null) {
@@ -416,7 +423,7 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.setBlurPercentage(80);
         livenessCustomization.setGlarePercentage(-1, -1);
 
-        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_url");
+        Intent intent = SelfieCameraActivity.getCustomIntent(this, livenessCustomization, "your_liveness_url",Utils.DATABASE_SERVER_URL, Utils.DATABASE_SERVER_KEY, kycId);
         startActivityForResult(intent, ACCURA_LIVENESS_CAMERA);
     }
 

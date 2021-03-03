@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.accurascan.accura.qatar.demo.util.Utils;
 import com.accurascan.libqatar.CameraView;
 import com.accurascan.libqatar.interfaces.OcrCallback;
 import com.accurascan.libqatar.model.OcrData;
@@ -111,6 +112,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 .setView(linearLayout) // To add camera view
                 .setOcrCallback(this)  // To get Update and Success Call back
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible
+                .setAPIData(Utils.DATABASE_SERVER_URL, Utils.DATABASE_SERVER_KEY)
 //                optional field
 //                .setEnableMediaPlayer(false) // false to disable sound and true to enable sound and default it is true
 //                .setCustomMediaPlayer(MediaPlayer.create(this, com.accurascan.ocr.mrz.R.raw.beep)) // To add your custom sound and Must have to enable media player
@@ -308,6 +310,12 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         // stop ocr if failed
 //        tvScanMessage.setText(errorMessage);
         Runnable runnable = () -> Toast.makeText(OcrActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+        runOnUiThread(runnable);
+    }
+
+    @Override
+    public void onAPIError(String errorMessage) {
+        Runnable runnable = () -> Toast.makeText(OcrActivity.this, "Failed to send data on server -> " + errorMessage, Toast.LENGTH_LONG).show();
         runOnUiThread(runnable);
     }
 
