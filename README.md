@@ -49,7 +49,7 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar ocr
-        implementation 'com.github.accurascan:Qatar-SDK-Android:2.0.0'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.0.1'
         // for liveness
         implementation 'com.github.accurascan:Qatar-Liveness-Android:2.0.2'
         // for Accura Face Match
@@ -180,10 +180,10 @@ Below steps to setup Accura SDK's to your project.
         cameraView = new CameraView(this);
         if (recogType == RecogType.OCR) {
             // must have to set data for RecogType.OCR
-            cameraView.setCountryId(countryId).setCardId(cardId)
-            		.setMinFrameForValidate(3); // support only odd numbers like 3,5...
+            cameraView.setCountryId(countryId).setCardId(cardId);
         }
         cameraView.setRecogType(recogType) // is for qatar Id card or MRZ document
+                .setMinFrameForValidate(3) // support only odd numbers like 3,5...
                 .setView(cameraContainer) // To add camera view
                 .setOcrCallback(this)  // To get Update and Success Callback
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible
