@@ -7,15 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.accurascan.accura.qatar.demo.util.Utils;
 import com.accurascan.libqatar.CameraView;
@@ -40,6 +43,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
     private int cardId,countryId;
     private String cardName;
     RecogType recogType;
+    private LinearLayout data_table;
 
     private static class MyHandler extends Handler {
         private final WeakReference<OcrActivity> mActivity;
@@ -58,7 +62,12 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                     case 0: activity.tvTitle.setText(s);break;
                     case 1: activity.tvScanMessage.setText(s);break;
                     case 2: if (activity.cameraView != null) activity.cameraView.flipImage(activity.imageFlip);
+                        activity.handler.sendEmptyMessageDelayed(3, 1000);
                         break;
+                    case 3:
+                        if (activity.data_table != null) {
+                            activity.data_table.removeAllViews();
+                        }
                     default: break;
                 }
             }
@@ -126,6 +135,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         tvTitle = findViewById(R.id.tv_title);
         tvScanMessage = findViewById(R.id.tv_scan_msg);
         imageFlip = findViewById(R.id.im_flip_image);
+        data_table = findViewById(R.id.data_table);
     }
 
     @Override
@@ -259,6 +269,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
             case RecogEngine.SCAN_TITLE_OCR_FRONT:// for front side ocr;
                 return String.format("Scan Front Side of %s", cardName);
             case RecogEngine.SCAN_TITLE_OCR_BACK: // for back side ocr
+                isAdded = false;
                 return String.format("Scan Back Side of %s", cardName);
             case RecogEngine.SCAN_TITLE_MRZ:// for front side MRZ
                 return "Scan Front Side of Document";
@@ -300,9 +311,59 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 return "Scanning wrong side of document";
             case RecogEngine.ACCURA_ERROR_CODE_UPSIDE_DOWN_SIDE:
                 return "Document is upside down. Place it properly";
+            case RecogEngine.ACCURA_ERROR_CODE_MOVE_CARD:
+                return "Move your phone/card a little";
             default:
                 return s;
         }
+    }
+
+    boolean isAdded = false;
+
+    /**
+     * To know recognize process while scanning card
+     *
+     * @param requiredFields  An array of required fields to scanned card
+     * @param recognizedFields An array of scanned data from card
+     */
+    @Override
+    public void onRecognizeProcess(String[] requiredFields, String[] recognizedFields) {
+        if (!isAdded) {
+            data_table.removeAllViews();
+            for (int j = 0; j < requiredFields.length; j++) {
+                if (requiredFields[j] != null) {
+                    View layout = LayoutInflater.from(OcrActivity.this).inflate(R.layout.item_process, null);
+                    ImageView imCheck = layout.findViewById(R.id.im_check);
+                    TextView tvField = layout.findViewById(R.id.tv_field);
+                    LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            (1.0f/requiredFields.length)
+                    );
+                    tvField.setText(requiredFields[j]);
+                    imCheck.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cb_uncheck, null));
+                    layout.setLayoutParams(param);
+                    for (int i = 0; i < recognizedFields.length; i++) {
+                        if (recognizedFields[i] != null && requiredFields[j].equals(recognizedFields[i])) {
+                            imCheck.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cb_check, null));
+                        }
+                    }
+                    data_table.addView(layout);
+                    isAdded = true;
+                }
+            }
+        } else
+            for (int i = 0; i < recognizedFields.length; i++) {
+                if (recognizedFields[i] != null) {
+                    for (int j = 0; j < requiredFields.length; j++) {
+                        if (requiredFields[j] != null && requiredFields[j].equals(recognizedFields[i]) && data_table.getChildAt(j) != null) {
+                            LinearLayout layout = (LinearLayout) data_table.getChildAt(j);
+                            ImageView imCheck = layout.findViewById(R.id.im_check);
+                            imCheck.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_cb_check, null));
+                        }
+                    }
+                }
+            }
     }
 
     @Override
@@ -328,8 +389,9 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
                 //<editor-fold desc="Call CameraView#startOcrScan(true) To start again Camera Preview
                 //And CameraView#startOcrScan(false) To start first time">
 
+                isAdded = false;
                 if (cameraView != null) cameraView.startOcrScan(true);
-
+                data_table.removeAllViews();
                 //</editor-fold>
             }
         }
