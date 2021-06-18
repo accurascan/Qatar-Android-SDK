@@ -21,7 +21,7 @@ Below steps to setup Accura SDK's to your project.
 
 #### Step 2. Add the token to `gradle.properties`:
 
-    authToken=jp_9ldoc7h8fl5gbk4rsojgdiupa9
+    authToken=jp_ssguccab6c5ge2l4jitaj92ek2
 
 #### Step 3: Add the dependency:<br />
 ```
@@ -49,9 +49,9 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar ocr
-        implementation 'com.github.accurascan:Qatar-SDK-Android:2.0.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.1.1'
         // for liveness
-        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.0.2'
+        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.1.0'
         // for Accura Face Match
         implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.0.0'
     }
@@ -308,6 +308,17 @@ Below steps to setup Accura SDK's to your project.
         });
     }
 
+    /**
+     * To know recognize process while scanning card
+     *
+     * @param requiredFields  An array of required fields to scanned card
+     * @param recognizedFields An array of scanned data from card
+     */
+    @Override
+    public void onRecognizeProcess(String[] requiredFields, String[] recognizedFields) {
+        ...
+    }
+
     @Override
     public void onError(String errorMessage) {
         // make sure update view on ui thread
@@ -369,6 +380,8 @@ Below steps to setup Accura SDK's to your project.
                 return "Scanning wrong side of document";
             case RecogEngine.ACCURA_ERROR_CODE_UPSIDE_DOWN_SIDE:
                 return "Document is upside down. Place it properly";
+            case RecogEngine.ACCURA_ERROR_CODE_MOVE_CARD:
+                return "Move your phone/card a little";
             default:
                 return s;
         }

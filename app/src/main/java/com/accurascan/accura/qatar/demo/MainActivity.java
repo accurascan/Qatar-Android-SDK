@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // must have to required storage permission to print logs
+    // must have to required storage permission to print logs and remove print log in release mode
     public void printLog() {
         File file = new File(Environment.getExternalStorageDirectory(), "AccuraQatar.log");
         String command = "logcat -f "+ file.getPath() + " -v time *:V";
