@@ -417,9 +417,11 @@ public class OcrResultActivity extends BaseActivity implements FaceHelper.FaceMa
         livenessCustomization.feedBackCenterMessage = "Center Your Face";
         livenessCustomization.feedBackMultipleFaceMessage = "Multiple Face Detected";
         livenessCustomization.feedBackHeadStraightMessage = "Keep Your Head Straight";
+        livenessCustomization.feedBackLowLightMessage = "Low light detected";
         livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
         livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
 
+        livenessCustomization.setLowLightTolerence(39);
         livenessCustomization.setBlurPercentage(80);
         livenessCustomization.setGlarePercentage(-1, -1);
 
