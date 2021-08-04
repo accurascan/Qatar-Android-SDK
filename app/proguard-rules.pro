@@ -19,8 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep public class com.docrecog.scan.ImageOpencv {*;}
--keep class com.accurascan.libqatar.model.** {*;}
--keep class com.accurascan.libqatar.interfaces.** {*;}
--keep public class com.inet.facelock.callback.FaceCallback {*;}
--keep public class com.inet.facelock.callback.FaceDetectionResult {*;}

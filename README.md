@@ -28,6 +28,15 @@ Below steps to setup Accura SDK's to your project.
     Set AccuraOcr as a dependency to our app level `build.gradle` file.
 
     android {
+        defaultConfig {
+            ...
+            ndk {
+                // Specify CPU architecture.
+                // 'armeabi-v7a' & 'arm64-v8a' are respectively 32 bit and 64 bit device architecture 
+                // 'x86' & 'x86_64' are respectively 32 bit and 64 bit emulator architecture
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            }
+        }
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
@@ -49,11 +58,11 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar ocr
-        implementation 'com.github.accurascan:Qatar-SDK-Android:2.1.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.2.1'
         // for liveness
-        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.1.0'
+        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.2.1'
         // for Accura Face Match
-        implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.0.0'
+        implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.1'
     }
 ```
 #### Step 4: Add files to project assets folder:<br />
@@ -417,24 +426,7 @@ Below steps to setup Accura SDK's to your project.
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
-    <application
-        ...
-        android:networkSecurityConfig="@xml/network_security_config"
-        >
-
-     </application>
-
-#### Step 2 :  Add following code to your Application class or MainActivity for hostname verification
-
-    new HostnameVerifier() {
-        @Override
-        public boolean verify(String hostname, SSLSession session) {
-            HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-            return hv.verify("your liveness url host name", session);
-        }
-    };
-
-#### Step 3 : Open camera for liveness Detectcion.
+#### Step 2 : Open camera for liveness Detectcion.
 
     Must to Grant camera permission
 
@@ -455,8 +447,12 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.feedBackCenterMessage = "Center Your Face";
     livenessCustomization.feedBackMultipleFaceMessage = "Multiple Face Detected";
     livenessCustomization.feedBackHeadStraightMessage = "Keep Your Head Straight";
+    livenessCustomization.feedBackLowLightMessage = "Low light detected";
     livenessCustomization.feedBackBlurFaceMessage = "Blur Detected Over Face";
     livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
+    
+    // 0 is allow dark face and 100 is allow bright face or -1 to remove low light filter
+    livenessCustomization.setLowLightTolerence(39);
     
     // 0 for clean face and 100 for Blurry face or -1 to remove blur filter
     livenessCustomization.setBlurPercentage(80/*blurPercentage*/); // To allow blur on face
