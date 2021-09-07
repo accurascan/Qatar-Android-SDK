@@ -176,14 +176,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                HostnameVerifier hv = HttpsURLConnection.getDefaultHostnameVerifier();
-                return hv.verify("liveness url host name", session);
-            }
-        };
-
         btnMrz = findViewById(R.id.lout_mrz);
         btnMrz.setOnClickListener(new View.OnClickListener() {
             @Override
