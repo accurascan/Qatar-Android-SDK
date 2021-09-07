@@ -118,6 +118,7 @@ public class OcrActivity extends SensorsActivity implements OcrCallback {
         }
         cameraView.setRecogType(recogType)
                 .setMinFrameForValidate(3) // support only odd numbers of frame
+                .setMinFrameQatarName_IDNo_Validate(5)//
                 .setView(linearLayout) // To add camera view
                 .setOcrCallback(this)  // To get Update and Success Call back
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible

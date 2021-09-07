@@ -58,9 +58,9 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar ocr
-        implementation 'com.github.accurascan:Qatar-SDK-Android:2.2.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.3.1'
         // for liveness
-        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.2.1'
+        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.1'
         // for Accura Face Match
         implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.1'
     }
@@ -192,7 +192,8 @@ Below steps to setup Accura SDK's to your project.
             cameraView.setCountryId(countryId).setCardId(cardId);
         }
         cameraView.setRecogType(recogType) // is for qatar Id card or MRZ document
-                .setMinFrameForValidate(3) // support only odd numbers like 3,5...
+                .setMinFrameForValidate(3) // to add frame count for DOB and DOE . Support only odd numbers like 3,5...
+                .setMinFrameQatarName_IDNo_Validate(5) // to add frame count for Name and ID number. Supports only odd numbers like 5,7.....
                 .setView(cameraContainer) // To add camera view
                 .setOcrCallback(this)  // To get Update and Success Callback
                 .setStatusBarHeight(statusBarHeight)  // To remove Height from Camera View if status bar visible
@@ -452,10 +453,10 @@ Below steps to setup Accura SDK's to your project.
     livenessCustomization.feedBackGlareFaceMessage = "Glare Detected";
     
     // 0 is allow dark face and 100 is allow bright face or -1 to remove low light filter
-    livenessCustomization.setLowLightTolerence(39);
+    livenessCustomization.setLowLightTolerence(31);
     
     // 0 for clean face and 100 for Blurry face or -1 to remove blur filter
-    livenessCustomization.setBlurPercentage(80/*blurPercentage*/); // To allow blur on face
+    livenessCustomization.setBlurPercentage(75/*blurPercentage*/); // To allow blur on face
     
     // Set min and max percentage for glare or set it -1 to remove glare filter
     livenessCustomization.setGlarePercentage(6/*glareMinPercentage*/, 99/*glareMaxPercentage*/);
