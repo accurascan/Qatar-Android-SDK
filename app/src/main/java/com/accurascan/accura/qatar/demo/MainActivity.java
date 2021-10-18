@@ -117,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
                         recogEngine.setFaceBlurPercentage(activity, 80);
                         recogEngine.setGlarePercentage(activity, 6, 98);
                         recogEngine.isCheckPhotoCopy(activity, false);
-                        recogEngine.SetHologramDetection(activity, true);
+                        recogEngine.doRemoveBrightness(activity, true,200);
+                        recogEngine.SetHologramDetection(activity, false);
                         recogEngine.setLowLightTolerance(activity, 30);
                         recogEngine.setMotionThreshold(activity, 18);
 
