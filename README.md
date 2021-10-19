@@ -58,7 +58,7 @@ Below steps to setup Accura SDK's to your project.
     dependencies {
         ...
         // for Accura qatar ocr
-        implementation 'com.github.accurascan:Qatar-SDK-Android:2.3.1'
+        implementation 'com.github.accurascan:Qatar-SDK-Android:2.4.1'
         // for liveness
         implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.1'
         // for Accura Face Match
@@ -117,6 +117,15 @@ Below steps to setup Accura SDK's to your project.
 		// Set min and max percentage for glare
 		recogEngine.setGlarePercentage(Context context, int /*minPercentage*/6, int /*maxPercentage*/98);
 		```
+   * To remove extra brightness from the document
+
+        ```
+   		// Set true to enable and set the threshold above which it will remove extra brightness
+   		//Threshold is the brightness value of document , above which it will remove extra brightness of document
+   		recogEngine.doRemoveBrightness(Context context,boolean /*doRemoveBrightness*/ true ,int /*threshold*/ 200 or more);
+   		```
+
+
    * Set Photo Copy to allow photocopy document or not
 
         ```
