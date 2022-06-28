@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.accurascan.accura.qatar.demo.util.Utils;
 import com.accurascan.facedetection.utils.AccuraLivenessLog;
 import com.accurascan.libqatar.model.ContryModel;
 import com.accurascan.libqatar.util.AccuraLog;
+import com.accurascan.libqatar.util.Util;
 import com.docrecog.scan.RecogEngine;
 import com.docrecog.scan.RecogType;
 import com.google.android.gms.common.ConnectionResult;
@@ -199,10 +201,37 @@ public class MainActivity extends AppCompatActivity {
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         cardAdapter = new CardListAdpter(this, cardList);
         rvCards.setAdapter(cardAdapter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Utils.isPermissionsGranted(this)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", this)));
+                    startActivityForResult(intent, 2296);
+                } catch (Exception e) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, 2296);
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
+                requestCameraPermission();
+            } else {
+                Runnable runnable = new Runnable() {
+                    public void run() {
+                        doWork();
+                    }
+                };
+                runOnUiThread(runnable);
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
             requestCameraPermission();
         } else {
-            doWork();
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    doWork();
+                }
+            };
+            runOnUiThread(runnable);
         }
     }
 
@@ -239,7 +268,18 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Make sure device has google play service", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case 2296:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
+                            requestCameraPermission();
+                        } else {
+                            doWork();
 
+                        }
+                    }
+                }
+                break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
@@ -287,8 +327,6 @@ public class MainActivity extends AppCompatActivity {
         if (!isGooglePlayServicesAvailable(this)) {
             return;
         }
-        printLog();  // Create Log file
-
         progressBar = new ProgressDialog(this);
         progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressBar.setMessage("Please wait...");
