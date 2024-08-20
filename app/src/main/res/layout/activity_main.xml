@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                <TextView
                     android:id="@+id/lout_mrz"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -36,7 +36,6 @@
                     android:text="@string/passport_mrz"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    app:typeface="ALLER_STD_REG"
                     android:visibility="gone"/>
 
                 <androidx.recyclerview.widget.RecyclerView

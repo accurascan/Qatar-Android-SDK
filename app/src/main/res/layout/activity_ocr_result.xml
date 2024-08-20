@@ -100,7 +100,7 @@
                                 style="@style/IconLayout"
                                 android:src="@drawable/ic_liveness" />
 
-                            <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                            <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -137,11 +137,10 @@
                             layout="@layout/table_item"
                             android:visibility="gone"/>
 
-                        <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                        <TextView
                             android:id="@+id/tvLivenessScore"
                             style="@style/ScoreText"
                             android:text="0 %"
-                            app:typeface="ALLER_STD_REG"
                             android:visibility="gone"/>
 
                     </LinearLayout>
@@ -164,7 +163,7 @@
                                 style="@style/IconLayout"
                                 android:src="@drawable/ic_biometric" />
 
-                            <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                            <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
@@ -178,11 +177,10 @@
 
                         </LinearLayout>
 
-                        <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                        <TextView
                             android:id="@+id/tvFaceMatchScore"
                             style="@style/ScoreText"
-                            android:text="0 %"
-                            app:typeface="ALLER_STD_REG" />
+                            android:text="0 %" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -202,7 +200,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                    <TextView
                         style="@style/ResultText"
                         android:text="OCR FRONT" />
 
@@ -224,7 +222,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                    <TextView
                         style="@style/ResultText"
                         android:text="OCR BACK" />
 
@@ -246,7 +244,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                    <TextView
                         style="@style/ResultText"
                         android:text="MRZ" />
 
@@ -268,7 +266,7 @@
                     android:background="@color/white"
                     android:orientation="vertical">
 
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                    <TextView
                         style="@style/ResultText"
                         android:text="FRONT SIDE" />
 
@@ -299,7 +297,7 @@
                     android:orientation="vertical"
                     android:paddingBottom="@dimen/_10dp">
 
-                    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+                    <TextView
                         style="@style/ResultText"
                         android:text="BACK SIDE" />
 

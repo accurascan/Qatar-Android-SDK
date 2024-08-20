@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -201,30 +202,8 @@ public class MainActivity extends AppCompatActivity {
         rvCards.setLayoutManager(new LinearLayoutManager(this));
         cardAdapter = new CardListAdpter(this, cardList);
         rvCards.setAdapter(cardAdapter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                try {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                    intent.addCategory("android.intent.category.DEFAULT");
-                    intent.setData(Uri.parse(String.format("package:%s", this)));
-                    startActivityForResult(intent, 2296);
-                } catch (Exception e) {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                    startActivityForResult(intent, 2296);
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
-                requestCameraPermission();
-            } else {
-                Runnable runnable = new Runnable() {
-                    public void run() {
-                        doWork();
-                    }
-                };
-                runOnUiThread(runnable);
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
-            requestCameraPermission();
+        if (!isCameraPermissionsGranted(this) || !isStoragePermissionsGranted(this)) {
+            requestCameraPermission(this);
         } else {
             Runnable runnable = new Runnable() {
                 public void run() {
@@ -271,8 +250,8 @@ public class MainActivity extends AppCompatActivity {
             case 2296:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (Environment.isExternalStorageManager()) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Util.isPermissionsGranted(this)) {
-                            requestCameraPermission();
+                        if (!isCameraPermissionsGranted(this) || !isStoragePermissionsGranted(this)) {
+                            requestCameraPermission(this);
                         } else {
                             doWork();
 
@@ -285,17 +264,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //requesting the camera permission
-    public void requestCameraPermission() {
+    public static boolean isCameraPermissionsGranted(Context context) {
+        String permission = Manifest.permission.CAMERA;
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+
+        return true;
+    }
+
+    public static boolean isStoragePermissionsGranted(Context context) {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+        if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED/* || checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED*/) {
+            return false;
+        }
+        return true;
+    }
+
+    public static void requestCameraPermission(Activity activity) {
+        String[] permissions;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/};
+        } else {
+            permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/};
+        }
         int currentapiVersion = Build.VERSION.SDK_INT;
         if (currentapiVersion >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-            || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            if (ContextCompat.checkSelfPermission(activity, permissions[0]) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(activity, permissions[1]) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions[0]) &&
+                        ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions[1])) {
+
+                    ActivityCompat.requestPermissions(activity,
+                            permissions,
+                            1);
+
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    ActivityCompat.requestPermissions(activity,
+                            permissions,
+                            1);
                 }
             }
         }
@@ -305,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission();
+            requestCameraPermission(this);
         }
         switch (requestCode) {
             case 1:

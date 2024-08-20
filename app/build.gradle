@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 33
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.accurascan.accura.qatar.demo"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 22
         versionName "2.2.1"
 
@@ -31,23 +31,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
     packagingOptions {
-        pickFirst 'lib/arm64-v8a/libcrypto.so'
-        pickFirst 'lib/arm64-v8a/libssl.so'
-
-        pickFirst 'lib/armeabi-v7a/libcrypto.so'
-        pickFirst 'lib/armeabi-v7a/libssl.so'
-
-        pickFirst 'lib/x86/libcrypto.so'
-        pickFirst 'lib/x86/libssl.so'
-
-        pickFirst 'lib/x86_64/libcrypto.so'
-        pickFirst 'lib/x86_64/libssl.so'
+        jniLibs {
+            pickFirsts += ['lib/arm64-v8a/libcrypto.so', 'lib/arm64-v8a/libssl.so', 'lib/armeabi-v7a/libcrypto.so', 'lib/armeabi-v7a/libssl.so', 'lib/x86/libcrypto.so', 'lib/x86/libssl.so', 'lib/x86_64/libcrypto.so', 'lib/x86_64/libssl.so']
+        }
     }
+
+    namespace 'com.accurascan.accura.qatar.demo'
 
 //    splits {
 //        abi {
@@ -62,21 +55,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
-    implementation 'com.google.android.material:material:1.5.0-alpha01'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    implementation 'com.google.android.material:material:1.6.0'
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     // for Accura qatar ocr
-    implementation 'com.github.accurascan:Qatar-SDK-Android:2.5.2'
+    implementation 'com.github.accurascan:Qatar-SDK-Android:2.5.3'
     // for liveness
     implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.1'
     // for Accura Face Match
-    implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.1'
+    implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.3'
 
     implementation 'com.google.android.gms:play-services-base:17.5.0'
 

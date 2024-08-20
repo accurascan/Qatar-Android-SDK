@@ -11,7 +11,7 @@
     android:padding="@dimen/_10dp"
     android:showDividers="middle">
 
-    <com.accurascan.accura.qatar.demo.customview.CustomTextView
+    <TextView
         android:id="@+id/tv_key"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,10 +21,9 @@
         android:text=""
         android:textAllCaps="true"
         android:textColor="@color/colorAccent"
-        android:textSize="15sp"
-        app:typeface="ALLER_STD_REG" />
+        android:textSize="15sp" />
 
-        <com.accurascan.accura.qatar.demo.customview.CustomTextView
+        <TextView
             android:id="@+id/tv_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -35,8 +34,7 @@
             android:minHeight="40dp"
             android:textAllCaps="true"
             android:textColor="@color/darkGray"
-            android:textSize="17sp"
-            app:typeface="ALLER_STD_REG" />
+            android:textSize="17sp" />
 
 </LinearLayout>
 
