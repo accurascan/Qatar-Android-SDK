@@ -62,7 +62,7 @@ Below steps to setup Accura SDK's to your project.
         // for liveness
         implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.1'
         // for Accura Face Match
-        implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.3'
+        implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.4'
     }
 ```
 #### Step 4: Add files to project assets folder:<br />
