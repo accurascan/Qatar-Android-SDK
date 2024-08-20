@@ -60,7 +60,7 @@ Below steps to setup Accura SDK's to your project.
         // for Accura qatar ocr
         implementation 'com.github.accurascan:Qatar-SDK-Android:2.5.4'
         // for liveness
-        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.2'
+        implementation 'com.github.accurascan:Qatar-Liveness-Android:2.3.3'
         // for Accura Face Match
         implementation 'com.github.accurascan:Qatar-FaceMatch-Android:2.2.4'
     }
